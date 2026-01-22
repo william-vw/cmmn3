@@ -1,0 +1,50 @@
+@prefix in: <http://n3.w3c.org/builtin/input#> .
+@prefix list: <http://www.w3.org/2000/10/swap/list#> .
+@prefix log: <http://www.w3.org/2000/10/swap/log#> .
+@prefix math: <http://www.w3.org/2000/10/swap/math#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix cond: <http://rdf.org/cond#> .
+@prefix state: <http://rdf.org/state#> .
+@prefix cm: <http://rdf.org/cmmn#> .
+
+# - sentries
+# -- entry
+{
+    {
+        ?task cm:hasSentry ?sentry .
+        
+        ( { ?sentry cm:hasPlanItemPart ?planItemPart . ?planItemPart cm:hasEvent 'complete' } { ?planItemPart!cm:hasSource state:in state:Completed } )
+            log:forAllIn _:t .
+
+        ( { ?sentry cm:hasPlanItemPart ?planItemPart . ?planItemPart cm:hasEvent 'occur' } { ?planItemPart!cm:hasSource state:in state:Occurred } )
+            log:forAllIn _:t .
+
+        ( { ?sentry cm:hasCondition ?cond } { ?cond cond:conditionMet true } )
+            log:forAllIn _:t .
+
+    } a log:StableTruth .
+
+    ?task state:in state:Inactive .
+
+} log:becomes {
+    ?task state:in state:Active
+} .
+
+# -- exit
+# TODO
+
+# - stages
+{
+    {
+        ?stage state:in state:Active .
+        ?stage cm:hasChild ?child
+
+    } a log:StableTruth .
+
+    ?child state:in state:Inactive
+
+} log:becomes {
+    ?child state:in state:Active
+} .

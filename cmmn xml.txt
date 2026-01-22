@@ -1,0 +1,45 @@
+task:
+cmmn:planItem
+	label:
+	#definitionRef = cmmn:task#id, #name
+
+	sentry:
+		event:
+		> entryCriterion#sentryRef = cmmn:sentry#id, > cmmn:planItemOnPart > cmmn:standardEvent
+
+		source: 
+		> entryCriterion#sentryRef = cmmn:sentry#id > cmmn:planItemOnPart#sourceRef
+		
+		condition:
+		> entryCriterion#id = cmmn:association#sourceRef, #targetRef=cmmn:textAnnotation#id > cmmn:text
+
+stage:
+cmmn:stage
+	label: 
+	#name
+
+	children:
+	> cmmn:planItem
+
+
+mandatory:
+cmmn:planItem
+	> cmmn:itemControl > cmmn:requiredRule
+
+---
+
+rdf:
+
+PlanItem
+	rdfs:label label 
+
+	hasSentry [
+		hasEvent event
+		hasCondition condition	
+		hasSource (PlanItem)
+	]
+
+Stage > PlanItem
+	hasChild (PlanItem)
+
+---

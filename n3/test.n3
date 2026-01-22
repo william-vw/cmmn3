@@ -1,0 +1,32 @@
+@prefix in: <http://n3.w3c.org/builtin/input#> .
+@prefix list: <http://www.w3.org/2000/10/swap/list#> .
+@prefix log: <http://www.w3.org/2000/10/swap/log#> .
+@prefix math: <http://www.w3.org/2000/10/swap/math#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix cond: <http://rdf.org/cond#> .
+@prefix state: <http://rdf.org/state#> .
+@prefix cm: <http://rdf.org/cmmn#> .
+
+cm:task1 a cm:PlanItem ;
+    state:in state:Inactive ;
+    cond:isMet true .
+
+# inactive, ready, active, completed
+
+{
+    {
+        ?task a cm:PlanItem ;
+            cond:isMet true .
+
+    } a log:StableTruth .
+
+    ?task state:in state:Inactive .
+
+} 
+# =>
+log:becomes 
+{
+    ?task state:in state:Active
+} .
