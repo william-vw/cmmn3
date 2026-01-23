@@ -10,20 +10,20 @@
 @prefix state: <http://rdf.org/state#> .
 @prefix cm: <http://rdf.org/cmmn#> .
 
-{   ?planItem state:curState ( ?curStateType ( ?curStateType ?curStateId ) ) } 
-<= {
-    ?planItem a cm:PlanItem .
-    ( ?someStateId { ?planItem state:in ( ?someStateType ?someStateId ) } ?stateIds )
-        log:collectAllIn _:t .
+cm:task1 a cm:PlanItem .
+cm:task1 state:in ( state:Inactive 0 ) .
+# cm:task1 state:in ( state:Ready 1 ) .
+# cm:task1 state:in ( state:Active 2 ) .
 
-    ?stateIds e:max ?curStateId .
-    ?planItem state:in ( ?curStateType ?curStateId ) .
-} .
+{
+    ?planItem a cm:PlanItem . # tasks, stages, milestones
+    _:t log:notIncludes {
+        ?stage cm:hasChild ?planItem
+    } .
 
-{   ?state state:transit ( ?nextStateType ?nextState ) }
-<= {
-    ?state log:equalTo ( ?stateType ?stateId ) .
-    ( ?stateId 1 ) math:sum  ?nextStateId .
+    ?planItem state:curState ( state:Inactive ?state ) .
+    ?state state:transit ( state:Ready ?nextState ).
 
-    ?nextState log:equalTo ( ?nextStateType ?nextStateId )
+} => {
+    ?planItem state:in ?nextState
 } .
