@@ -12,43 +12,43 @@
         <http://ontario.org/qbp/cap#Task_0kvjrmn>,
         <http://ontario.org/qbp/cap#Task_0rwjaka> ;
     ns1:hasSentry <http://ontario.org/qbp/cap#Sentry_1a74myc> ;
-    ns1:isMandatory "false"^^xsd:bool ;
-    ns2:in ( ns2:Inactive "init" 0 ) .
+    ns1:isMandatory false ;
+    ns2:in ( ns2:Active "sentryFired" "2" ) .
 
 <http://ontario.org/qbp/cap#Task_10t4i0s> a ns1:PlanItem,
         ns1:Task ;
     rdfs:label "antibiotics" ;
     ns1:hasSentry <http://ontario.org/qbp/cap#Sentry_067ofz5>,
         <http://ontario.org/qbp/cap#Sentry_1w0pe1z> ;
-    ns1:isMandatory "true"^^xsd:bool ;
-    ns2:in ( ns2:Inactive "init" 0 ) .
+    ns1:isMandatory true ;
+    ns2:in ( ns2:Ready "notInStage" "1" ) .
 
 <http://ontario.org/qbp/cap#Task_1dy8o18> a ns1:PlanItem,
         ns1:Task ;
     rdfs:label "urine antigen testing" ;
     ns1:hasSentry <http://ontario.org/qbp/cap#Sentry_1xz9isz> ;
-    ns1:isMandatory "true"^^xsd:bool ;
-    ns2:in ( ns2:Inactive "init" 0 ) .
+    ns1:isMandatory true ;
+    ns2:in ( ns2:Ready "notInStage" "1" ) .
 
 <http://ontario.org/qbp/cap#Task_1hoczvg> a ns1:PlanItem,
         ns1:Task ;
     rdfs:label "Blood cultures" ;
     ns1:hasSentry <http://ontario.org/qbp/cap#Sentry_1bmb6md> ;
-    ns1:isMandatory "true"^^xsd:bool ;
-    ns2:in ( ns2:Inactive "init" 0 ) .
+    ns1:isMandatory true ;
+    ns2:in ( ns2:Ready "notInStage" "1" ) .
 
 <http://ontario.org/qbp/cap#Task_1vk3nm4> a ns1:PlanItem,
         ns1:Task ;
     rdfs:label "PCR for legionella" ;
     ns1:hasSentry <http://ontario.org/qbp/cap#Sentry_04sldkm> ;
-    ns1:isMandatory "false"^^xsd:bool ;
-    ns2:in ( ns2:Inactive "init" 0 ) .
+    ns1:isMandatory false ;
+    ns2:in ( ns2:Ready "notInStage" "1" ) .
 
 <http://ontario.org/qbp/cap#Milestone_0gl7st9> a ns1:Milestone,
         ns1:PlanItem ;
     rdfs:label "hospital admission" ;
-    ns1:isMandatory "false"^^xsd:bool ;
-    ns2:in ( ns2:Inactive "init" 0 ) .
+    ns1:isMandatory false ;
+    ns2:in ( ns2:Occurred "observation" 3 ) .
 
 <http://ontario.org/qbp/cap#PlanItemOnPart_13ja4ae> ns1:hasEvent "complete" ;
     ns1:hasSource <http://ontario.org/qbp/cap#Task_0kvjrmn> .
@@ -100,34 +100,34 @@
 <http://ontario.org/qbp/cap#Task_022k641> a ns1:PlanItem,
         ns1:Task ;
     rdfs:label "oxygen saturation" ;
-    ns1:isMandatory "true"^^xsd:bool ;
-    ns2:in ( ns2:Inactive "init" 0 ) .
+    ns1:isMandatory true ;
+    ns2:in ( ns2:Active "noSentries" "2" ) .
 
 <http://ontario.org/qbp/cap#Task_0akqm8t> a ns1:PlanItem,
         ns1:Task ;
     rdfs:label "routine bloodwork: CBC, electrolytes, renal function" ;
-    ns1:isMandatory "true"^^xsd:bool ;
-    ns2:in ( ns2:Inactive "init" 0 ) .
+    ns1:isMandatory true ;
+    ns2:in ( ns2:Active "noSentries" "2" ) .
 
 <http://ontario.org/qbp/cap#Task_0hsxzhz> a ns1:PlanItem,
         ns1:Task ;
     rdfs:label "gram staining" ;
     ns1:hasSentry <http://ontario.org/qbp/cap#Sentry_1qa989d> ;
-    ns1:isMandatory "false"^^xsd:bool ;
-    ns2:in ( ns2:Inactive "init" 0 ) .
+    ns1:isMandatory false ;
+    ns2:in ( ns2:Ready "inActiveStage" "1" ) .
 
 <http://ontario.org/qbp/cap#Task_0rwjaka> a ns1:PlanItem,
         ns1:Task ;
     rdfs:label "Blood gases, lactate, liver enzyme and liver function tests" ;
     ns1:hasSentry <http://ontario.org/qbp/cap#Sentry_10xsank> ;
-    ns1:isMandatory "false"^^xsd:bool ;
-    ns2:in ( ns2:Inactive "init" 0 ) .
+    ns1:isMandatory false ;
+    ns2:in ( ns2:Ready "inActiveStage" "1" ) .
 
 <http://ontario.org/qbp/cap#Task_0u6b4ee> a ns1:PlanItem,
         ns1:Task ;
     rdfs:label "x-ray" ;
-    ns1:isMandatory "true"^^xsd:bool ;
-    ns2:in ( ns2:Inactive "init" 0 ) .
+    ns1:isMandatory true ;
+    ns2:in ( ns2:Active "noSentries" "2" ) .
 
 <http://ontario.org/qbp/cap#TextAnnotation_06w3qnp> rdfs:comment "sepsis present" .
 
@@ -149,6 +149,6 @@
         ns1:Task ;
     rdfs:label "sputum culture" ;
     ns1:hasSentry <http://ontario.org/qbp/cap#Sentry_1hunpo5> ;
-    ns1:isMandatory "false"^^xsd:bool ;
-    ns2:in ( ns2:Inactive "init" 0 ) .
+    ns1:isMandatory false ;
+    ns2:in ( ns2:Ready "inActiveStage" "1" ) .
 

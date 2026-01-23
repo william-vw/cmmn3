@@ -63,7 +63,7 @@
 # - stages
 
 {
-    ?stage state:in state:Active .
+    ?stage state:isIn state:Active .
     ?stage cm:hasChild ?child .
 
     ?child state:transit ( state:Inactive state:Ready "inActiveStage" ?state ) .
