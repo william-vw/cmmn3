@@ -1,29 +1,17 @@
-@prefix in: <http://n3.w3c.org/builtin/input#> .
-@prefix list: <http://www.w3.org/2000/10/swap/list#> .
+@prefix : <http://example.org/>.
 @prefix log: <http://www.w3.org/2000/10/swap/log#> .
-@prefix math: <http://www.w3.org/2000/10/swap/math#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix cond: <http://rdf.org/cond#> .
-@prefix e: <http://eulersharp.sourceforge.net/2003/03swap/log-rules#>.
-@prefix state: <http://rdf.org/state#> .
-@prefix cm: <http://rdf.org/cmmn#> .
 
-{   ?planItem state:curState ( ?curStateType ( ?curStateType ?curStateId ) ) } 
-<= {
-    ?planItem a cm:PlanItem .
-    ( ?someStateId { ?planItem state:in ( ?someStateType ?someStateId ) } ?stateIds )
-        log:collectAllIn _:t .
-
-    ?stateIds e:max ?curStateId .
-    ?planItem state:in ( ?curStateType ?curStateId ) .
+:let :param { 
+    :Felix a :Cat . 
+    { ?X a :Cat . } => { ?X :says "Meow" . } .
 } .
 
-{   ?state state:transit ( ?nextStateType ?nextState ) }
-<= {
-    ?state log:equalTo ( ?stateType ?stateId ) .
-    ( ?stateId 1 ) math:sum  ?nextStateId .
-
-    ?nextState log:equalTo ( ?nextStateType ?nextStateId )
+{ 
+    # <test2.n3> log:semantics ?param .
+    :let :param ?param .
+    ?param log:conclusion ?conclusion .
+} 
+=> 
+{ 
+    :result :is ?conclusion . 
 } .

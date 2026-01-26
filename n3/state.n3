@@ -10,7 +10,7 @@
 @prefix state: <http://rdf.org/state#> .
 @prefix cm: <http://rdf.org/cmmn#> .
 
-# interface
+# - interface
 
 {   ?item state:transit ( ?curType ?nextType ?reason ?nextState ) }
 <= {
@@ -21,7 +21,7 @@
 {   ?item state:isIn ?stateType }
 <= { ?item state:cur ( ?stateType ?s ) } .
 
-# implementation
+# - implementation
 
 {   ?planItem state:cur ( ?curType ( ?curType ?curReason ?curId ) ) } 
 <= {
