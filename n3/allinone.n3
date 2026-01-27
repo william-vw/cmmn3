@@ -7,6 +7,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix cond: <http://rdf.org/cond#> .
 @prefix e: <http://eulersharp.sourceforge.net/2003/03swap/log-rules#>.
+@prefix graph: <http://www.w3.org/2000/10/swap/graph#>.
 @prefix state: <http://rdf.org/state#> .
 @prefix cm: <http://rdf.org/cmmn#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -16,49 +17,70 @@
 
 ( ( cap:Milestone_0gl7st9 state:Occurred 'observation' ) ) a cm:Trace .
 
-{ ?input cm:step ?states } 
+{ ?prior cm:run ?final } 
 <= {
-    ?input log:conclusion ?out .
-    ( { ?item state:in ?state } { ?item state:in ?state } ?statemts ) log:collectAllIn ?out .
-    ?statemts log:conjunction ?states .
-    # "step" log:trace ?states .
-} .
-
-{
-    ( ( ?item ?in ?reason ) ?states ) cm:toState { ?item state:in ( ?in ?reason ?newId ) }
-} <= {
-    ( ?id { ?item state:in ( ?t ?r ?id ) } ?ids )
-        log:collectAllIn ?states .
-
-    ?ids e:max ?max .
-    ( ?max 1 ) math:sum ?newId .
-} .
-
-{ ( ?trace ?input ?states ) cm:stepThroughTrace ?final } 
-<= {
-    ?trace e:firstRest ( ?next ?trace2 ) .
+    # "run prior" log:trace ?prior .
     
-    ( ?next ?states ) cm:toState ?obs .
+    ?prior cm:step ?next .
+    # "run next" log:trace ?next .
+
+    ( ?prior ?next ) cm:ctu ?final .
+} .
+
+{ ?prior cm:step ?next } 
+<= {
+    ( ?new 
+    {
+        ?item a cm:PlanItem .
+        ( ?item ?prior ) cm:to ?new
+    }    
+    ?news ) log:collectAllIn _:t .
+
+    ?news log:conjunction ?next .
+} .
+
+# TODO requires comparing entire graph terms with each other
+# can't we (easily) detect changes in the collectAllIn loop??
+{ ( ?prior ?prior ) cm:ctu ?prior }
+<= {
+    true log:callWithCut true
+} .
+
+{ ( ?prior ?next ) cm:ctu ?final }
+<= {
+    # "run ctu" log:trace "ctu" .
+    ?next cm:run ?final
+} .
+
+
+{ ( ?trace ?states ) cm:runThroughTrace ?final } 
+<= {
+    ?trace e:firstRest ( ( ?item ?type ?reason ) ?trace2 ) .
+    
+    ( ?item ?states ) state:isIn ( ?t ?obs0 ) .
+    ( ?item ?states ) state:createNew ( ( ?type ?reason ) ?obs ) .
     # "obs" log:trace ?obs .
 
-    ( ?input ?states ?obs ) log:conjunction ?input2 .
-    ?input2 cm:step ?state2 .
+    # TODO abstract this in state.n3
+    # need to REPLACE at same position, not append
+    # (else, out will be different literal, and continue with superfluous reasoning run)
+    ( ?states ?obs0 ) graph:difference ?states2 .
+    ( ?states2 ?obs ) log:conjunction ?states3 .
 
-    ( ?trace2 ?input2 ?state2 ) cm:stepThroughTrace ?final
+    ?states3 cm:run ?states4 .
+
+    ( ?trace2 ?states4 ) cm:runThroughTrace ?final
 } .
 
-{ ( () ?input ?states ) cm:stepThroughTrace ?states } <= {} . 
+{ ( () ?states ) cm:runThroughTrace ?states } <= {} . 
 
 {
-    <../cap.ttl> log:semantics ?dataN3 .
-    <state.n3> log:semantics ?stateN3 .
-    <workflow.n3> log:semantics ?wfN3 .
-    ( ?dataN3 ?stateN3 ?wfN3 ) log:conjunction ?input .
-    ?input cm:step ?states .
+    _:t state:init ?init .
+    # "init" log:trace ?init .
+    ?init cm:run ?next .
     
-    # ?trace a cm:Trace .
-    # ( ?trace ?input ?states ) cm:stepThroughTrace ?final .
-
+    ?trace a cm:Trace .
+    ( ?trace ?next ) cm:runThroughTrace ?final .
 } => {
     _:t :out ?final .
 } .

@@ -1,0 +1,64 @@
+@prefix in: <http://n3.w3c.org/builtin/input#> .
+@prefix list: <http://www.w3.org/2000/10/swap/list#> .
+@prefix log: <http://www.w3.org/2000/10/swap/log#> .
+@prefix math: <http://www.w3.org/2000/10/swap/math#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix cond: <http://rdf.org/cond#> .
+@prefix e: <http://eulersharp.sourceforge.net/2003/03swap/log-rules#>.
+@prefix state: <http://rdf.org/state#> .
+@prefix cm: <http://rdf.org/cmmn#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix cap: <http://ontario.org/qbp/cap#> .
+
+( ( cap:Milestone_0gl7st9 state:Occurred 'observation' ) ) a cm:Trace .
+
+{ ?input cm:step ?states } 
+<= {
+    ?input log:conclusion ?out .
+    ( { ?item state:in ?state } { ?item state:in ?state } ?statemts ) log:collectAllIn ?out .
+    ?statemts log:conjunction ?states .
+    # "step" log:trace ?states .
+} .
+
+{
+    ( ( ?item ?in ?reason ) ?states ) cm:toState { ?item state:in ( ?in ?reason ?newId ) }
+} <= {
+    ( ?id { ?item state:in ( ?t ?r ?id ) } ?ids )
+        log:collectAllIn ?states .
+
+    ?ids e:max ?max .
+    ( ?max 1 ) math:sum ?newId .
+} .
+
+{ ( ?trace ?input ?states ) cm:stepThroughTrace ?final } 
+<= {
+    ?trace e:firstRest ( ?next ?trace2 ) .
+    
+    ( ?next ?states ) cm:toState ?obs .
+    # "obs" log:trace ?obs .
+
+    ( ?input ?states ?obs ) log:conjunction ?input2 .
+    ?input2 cm:step ?state2 .
+
+    ( ?trace2 ?input2 ?state2 ) cm:stepThroughTrace ?final
+} .
+
+{ ( () ?input ?states ) cm:stepThroughTrace ?states } <= {} . 
+
+{
+    <../cap.ttl> log:semantics ?dataN3 .
+    <state.n3> log:semantics ?stateN3 .
+    <workflow.n3> log:semantics ?wfN3 .
+    ( ?dataN3 ?stateN3 ?wfN3 ) log:conjunction ?input .
+    ?input cm:step ?states .
+    
+    ?trace a cm:Trace .
+    ( ?trace ?input ?states ) cm:stepThroughTrace ?final .
+
+} => {
+    _:t :out ?final .
+} .

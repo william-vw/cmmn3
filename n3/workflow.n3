@@ -10,64 +10,82 @@
 @prefix state: <http://rdf.org/state#> .
 @prefix cm: <http://rdf.org/cmmn#> .
 
+
+# - init
+
+{
+    ( ?item ?states ) cm:to ?next
+} <= {
+    ?item a cm:PlanItem . # tasks, stages, milestones
+    _:t log:notIncludes {
+        ?stage cm:hasChild ?item
+    } .
+
+    ( ?item ?states ) state:isIn ( state:Inactive ?cur ) .
+    ( ?item ?states ) state:createNew ( ( state:Ready "notInStage" ) ?next ) .
+
+    true log:callWithCut true .
+} .
+
+# - stages
+
+{
+    ( ?child ?states ) cm:to ?next
+} <= {
+    ( ?stage ?states ) state:isIn state:Active .
+    ?stage cm:hasChild ?child .
+
+    ( ?child ?states ) state:isIn ( state:Inactive ?cur ) .
+    ( ?child ?cur ) state:createNew ( ( state:Ready "inActiveStage" ) ?next ) . 
+
+    true log:callWithCut true .
+} .
+
+
 # - sentries
 
 # -- entry
 {
-    ?planItem cm:hasSentry ?sentry .
+    ( ?item ?states ) cm:to ?next
+} <= {
+    ?item cm:hasSentry ?sentry .
     ?sentry a cm:EntrySentry .
     
-    ( { ?sentry cm:hasPlanItemPart ?planItemPart . ?planItemPart cm:hasEvent 'complete' } { ?planItemPart!cm:hasSource state:isIn state:Completed } )
+    ( { ?sentry cm:hasPlanItemPart ?itemPart . ?itemPart cm:hasEvent 'complete' } { ( ?itemPart!cm:hasSource ?states ) state:isIn ( state:Completed ?x ) } )
         log:forAllIn _:t .
 
-    ( { ?sentry cm:hasPlanItemPart ?planItemPart . ?planItemPart cm:hasEvent 'occur' } { ?planItemPart!cm:hasSource state:isIn state:Occurred } )
+    ( { ?sentry cm:hasPlanItemPart ?itemPart . ?itemPart cm:hasEvent 'occur' } { ( ?itemPart!cm:hasSource ?states ) state:isIn ( state:Occurred ?x ) } )
         log:forAllIn _:t .
 
     ( { ?sentry cm:hasCondition ?cond } { ?cond cond:conditionMet true } )
         log:forAllIn _:t .
 
-    ?planItem state:transit ( state:Ready state:Active "sentryFired" ?state ) .
+    ( ?item ?states ) state:isIn ( state:Ready ?cur ) .
+    ( ?item ?cur ) state:createNew ( ( state:Active "sentryFired" ) ?next ) .
 
-} => {
-    ?planItem state:in ?state
+    true log:callWithCut true .
 } .
 
 {
-    ?planItem a cm:PlanItem .
-    ( ?sentry { ?planItem cm:hasSentry ?sentry . ?sentry a cm:EntrySentry } () ) log:collectAllIn _:t .
+    ( ?item ?states ) cm:to ?next
+} <= {
+    ?item a cm:PlanItem .
+    ( ?sentry { ?item cm:hasSentry ?sentry . ?sentry a cm:EntrySentry } () ) log:collectAllIn _:t .
     
-    ?planItem state:transit ( state:Ready state:Active "noSentries" ?state ) .
+    ( ?item ?states ) state:isIn ( state:Ready ?cur ) .
+    ( ?item ?cur ) state:createNew ( ( state:Active "noSentries" ) ?next ) .
 
-} => {
-    ?planItem state:in ?state
+    true log:callWithCut true .
 } .
 
 # -- exit
 
 # TODO
 
-# - init
-
 {
-    ?planItem a cm:PlanItem . # tasks, stages, milestones
-    _:t log:notIncludes {
-        ?stage cm:hasChild ?planItem
-    } .
+    ( ?item ?states ) cm:to ?cur
+} <= {
+    ( ?item ?states ) state:isIn ( ?t ?cur ) . 
 
-    ?planItem state:transit ( state:Inactive state:Ready "notInStage" ?state ) .
-
-} => {
-    ?planItem state:in ?state
-} .
-
-# - stages
-
-{
-    ?stage state:isIn state:Active .
-    ?stage cm:hasChild ?child .
-
-    ?child state:transit ( state:Inactive state:Ready "inActiveStage" ?state ) .
-
-} => {
-    ?child state:in ?state
+    true log:callWithCut true .
 } .

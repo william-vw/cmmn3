@@ -10,30 +10,22 @@
 @prefix state: <http://rdf.org/state#> .
 @prefix cm: <http://rdf.org/cmmn#> .
 
-# - interface
-
-{   ?item state:transit ( ?curType ?nextType ?reason ?nextState ) }
+{ _:t state:init ?states }
 <= {
-    ?item state:cur ( ?curType ?curState ) .
-    ?curState state:next ( ?nextType ?reason ?nextState ) .
+    ( { ?item state:all ( ( ?t ?r ) ) } { ?item state:in ( ?t ?r ) } ?statemts )
+        log:collectAllIn _:t .   
+
+    ?statemts log:conjunction ?states
 } .
 
-{   ?item state:isIn ?stateType }
-<= { ?item state:cur ( ?stateType ?s ) } .
-
-# - implementation
-
-{   ?planItem state:cur ( ?curType ( ?curType ?curReason ?curId ) ) } 
+{ ( ?item ?states ) state:isIn ( ?curType { ?item state:all ?all } ) }
 <= {
-    ?planItem a cm:PlanItem .
-    ( ?someId { ?planItem state:in ( ?someType ?someReason ?someId ) } ?ids )
-        log:collectAllIn _:t .
-
-    ?ids e:max ?curId .
-    ?planItem state:in ( ?curType ?curReason ?curId ) .
+    ?states log:includes { ?item state:all ?all } .
+    ?all list:last ( ?curType ?curReason ) .
 } .
 
-{   ( ?curType ?curReason ?curId ) state:next (?nextType ?reason ( ?nextType ?reason ?nextId ) ) }
+{ ( ?item ?states ) state:createNew ( ( ?type ?reason ) { ?item state:all ?all2 } ) } 
 <= {
-    ( ?curId 1 ) math:sum ?nextId .
+    ?states log:includes { ?item state:all ?all } .
+    ( ?all ( ( ?type ?reason ) ) ) list:append ?all2 .
 } .
