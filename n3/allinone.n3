@@ -61,15 +61,11 @@
     ( ?item ?states ) state:createNew ( ( ?type ?reason ) ?obs ) .
     # "obs" log:trace ?obs .
 
-    # TODO abstract this in state.n3
-    # need to REPLACE at same position, not append
-    # (else, out will be different literal, and continue with superfluous reasoning run)
-    ( ?states ?obs0 ) graph:difference ?states2 .
-    ( ?states2 ?obs ) log:conjunction ?states3 .
+    ( ?states ?obs0 ?obs ) graph:replace ?states2 .
 
-    ?states3 cm:run ?states4 .
+    ?states2 cm:run ?states3 .
 
-    ( ?trace2 ?states4 ) cm:runThroughTrace ?final
+    ( ?trace2 ?states3 ) cm:runThroughTrace ?final
 } .
 
 { ( () ?states ) cm:runThroughTrace ?states } <= {} . 
