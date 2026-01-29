@@ -4,7 +4,7 @@
 
 ( 
     ( cap:Task_022k641 state:Completed 'observation' )
-    ( cap:Milestone_0gl7st9 state:Occurred 'observation' ) 
+    ( cap:Milestone_0gl7st9 state:Completed 'observation' ) 
     ( cap:Task_0akqm8t state:Completed 'observation' )
     ( cap:Task_10t4i0s state:Completed 'observation' )
     ( cap:Task_022k641 state:Completed 'observation' )

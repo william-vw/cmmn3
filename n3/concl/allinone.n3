@@ -14,7 +14,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix cap: <http://ontario.org/qbp/cap#> .
 
-( ( cap:Milestone_0gl7st9 state:Occurred 'observation' ) ) a cm:Trace .
+( ( cap:Milestone_0gl7st9 state:Completed 'observation' ) ) a cm:Trace .
 
 { ?input cm:step ?states } 
 <= {

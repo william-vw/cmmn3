@@ -13,7 +13,6 @@
 @prefix re: <http://rdf.org/cmmn/reason#> .
 @prefix er: <http://rdf.org/cmmn/error#> .
 
-
 # - init
 
 {
@@ -46,7 +45,7 @@
 } .
 
 { ( ?item ?states ) cm:isDoneOrOptional true } <= { ?item cm:isMandatory false } .
-{ ( ?item ?states ) cm:isDoneOrOptional true } <= { ( ?item ?states ) state:isIn ( state:Completed  ?x ) } .
+{ ( ?item ?states ) cm:isDoneOrOptional true } <= { ( ?item ?states ) state:isIn ( state:Completed ?x ) } .
 
 {
     ( ?stage ?states ) cm:to ?next
@@ -72,10 +71,7 @@
     ?item cm:hasSentry ?sentry .
     ?sentry a cm:EntrySentry .
     
-    ( { ?sentry cm:hasPlanItemPart ?itemPart . ?itemPart cm:hasEvent 'complete' } { ( ?itemPart!cm:hasSource ?states ) state:isIn ( state:Completed ?x ) } )
-        log:forAllIn _:t .
-
-    ( { ?sentry cm:hasPlanItemPart ?itemPart . ?itemPart cm:hasEvent 'occur' } { ( ?itemPart!cm:hasSource ?states ) state:isIn ( state:Occurred ?x ) } )
+    ( { ?sentry cm:hasPlanItemPart ?itemPart } { ( ?itemPart!cm:hasSource ?states ) state:isIn ( state:Completed ?x ) } )
         log:forAllIn _:t .
 
     ( { ?sentry cm:hasCondition ?cond } { ?cond cond:conditionMet true } )
@@ -175,7 +171,7 @@
 
 { ( ?item ?all ) cm:checkFinalItem ?all } <= {} .
 
-{ ( ?item ( ?type ?desc ) ) cm:lastError er:mandatoryLastNotCompleted } 
+{ ( ?item ( ?type ?desc ) ) cm:lastError er:mandatoryLastNotDone } 
 <= {
     ?item cm:isMandatory true .
     ?type log:notEqualTo state:Completed .

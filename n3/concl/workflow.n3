@@ -17,10 +17,7 @@
     ?planItem cm:hasSentry ?sentry .
     ?sentry a cm:EntrySentry .
     
-    ( { ?sentry cm:hasPlanItemPart ?planItemPart . ?planItemPart cm:hasEvent 'complete' } { ?planItemPart!cm:hasSource state:isIn state:Completed } )
-        log:forAllIn _:t .
-
-    ( { ?sentry cm:hasPlanItemPart ?planItemPart . ?planItemPart cm:hasEvent 'occur' } { ?planItemPart!cm:hasSource state:isIn state:Occurred } )
+    ( { ?sentry cm:hasPlanItemPart ?planItemPart } { ?planItemPart!cm:hasSource state:isIn state:Completed } )
         log:forAllIn _:t .
 
     ( { ?sentry cm:hasCondition ?cond } { ?cond cond:conditionMet true } )
