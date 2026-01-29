@@ -23,8 +23,10 @@
       .completed .djs-visual > :nth-child(1) { fill: deepskyblue !important }
       /* .error .djs-visual > :nth-child(1) { fill:rgb(255, 120, 120) !important } */
       .error .djs-visual > :nth-child(1) { stroke: red !important }
-      .sentryViolated .djs-visual > :nth-child(1) { stroke: red !important /* fill: rgb(255, 120, 120) !important */ }
-      .requiredViolated .djs-visual > :nth-child(3) { stroke: red !important }
+      .sentryViolated .djs-visual > :nth-child(1) { fill: rgb(255, 120, 120) !important }
+      .requiredViolated .djs-visual > :nth-child(1) { fill: rgb(255, 120, 120) !important }
+
+      /* attachTaskMarkers() */
 
       /* .diagram-note {
         background-color: rgba(66, 180, 21, 0.7);
@@ -82,29 +84,7 @@
           // zoom to fit full viewport
           canvas.zoom('fit-viewport');
 
-          showState('PlanItem_000hrg1', 'completed', canvas, overlays);
-showState('PlanItem_1i0a7li', 'completed', canvas, overlays);
-showState('PlanItem_0xchgvg', 'ready', canvas, overlays);
-showState('PlanItem_0ntpscm', 'ready', canvas, overlays);
-showState('PlanItem_1hc9qyp', 'ready', canvas, overlays);
-showState('PlanItem_1i1l7uj', 'completed', canvas, overlays);
-showState('PlanItem_1s8zhhx', 'completed', canvas, overlays);
-showState('PlanItem_10zx5c3', 'completed', canvas, overlays);
-showState('PlanItem_04z6f16', 'ready', canvas, overlays);
-showState('PlanItem_1bjqkao', 'ready', canvas, overlays);
-showState('PlanItem_08x0xdn', 'active', canvas, overlays);
-showState('PlanItem_08e8toi', 'ready', canvas, overlays);
-showState('PlanItem_1i0a7li', 'error', canvas, overlays);
-showState('EntryCriterion_0u33j0f', 'sentryViolated', canvas, overlays);
-showState('EntryCriterion_01cmj7b', 'sentryViolated', canvas, overlays);
-showState('PlanItem_0xchgvg', 'error', canvas, overlays);
-showState('PlanItem_0xchgvg', 'requiredViolated', canvas, overlays);
-showState('PlanItem_0ntpscm', 'error', canvas, overlays);
-showState('PlanItem_0ntpscm', 'requiredViolated', canvas, overlays);
-showState('PlanItem_1s8zhhx', 'error', canvas, overlays);
-showState('PlanItem_10zx5c3', 'error', canvas, overlays);
-showState('PlanItem_08x0xdn', 'error', canvas, overlays);
-showState('PlanItem_08x0xdn', 'requiredViolated', canvas, overlays);
+          <placeholder>
 
           // // attach an overlay to a node
           // overlays.add('PlanItem_000hrg1', 'note', {
