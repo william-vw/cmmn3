@@ -12,20 +12,24 @@
 
 { _:t state:init ?states }
 <= {
-    ( { ?item state:all ( ( ?t ?r ) ) } { ?item state:in ( ?t ?r ) } ?statemts )
+    ( { ?item state:all ( ( ?type ( ?reason ) ) ) } { ?item state:in ( ?type ?reason ) } ?statemts )
         log:collectAllIn _:t .   
 
     ?statemts log:conjunction ?states
 } .
 
-{ ( ?item ?states ) state:isIn ( ?curType { ?item state:all ?all } ) }
+{ ( ?item ?states ) state:isIn ( ?type { ?item state:all ?all } ) }
 <= {
     ?states log:includes { ?item state:all ?all } .
-    ?all list:last ( ?curType ?curReason ) .
+    ?all list:last ( ?type ?desc ) .
 } .
 
 { ( ?item ?states ) state:createNew ( ( ?type ?reason ) { ?item state:all ?all2 } ) } 
 <= {
     ?states log:includes { ?item state:all ?all } .
-    ( ?all ( ( ?type ?reason ) ) ) list:append ?all2 .
+
+    ?new log:equalTo ( ?type ( ?reason ) ) .
+    ( ?item ?all ?new ) state:check ?new2 .
+
+    ( ?all ( ?new2 ) ) list:append ?all2 .
 } .

@@ -1,3 +1,4 @@
+@prefix string: <http://www.w3.org/2000/10/swap/string#> .
 @prefix in: <http://n3.w3c.org/builtin/input#> .
 @prefix list: <http://www.w3.org/2000/10/swap/list#> .
 @prefix log: <http://www.w3.org/2000/10/swap/log#> .
@@ -14,8 +15,6 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix cap: <http://ontario.org/qbp/cap#> .
-
-( ( cap:Milestone_0gl7st9 state:Occurred 'observation' ) ) a cm:Trace .
 
 { ?prior cm:run ?final } 
 <= {
@@ -39,7 +38,7 @@
     ?news log:conjunction ?next .
 } .
 
-# TODO requires comparing entire graph terms with each other
+# NOTE requires comparing "entire" graph terms with each other
 # can't we (easily) detect changes in the collectAllIn loop??
 { ( ?prior ?prior ) cm:ctu ?prior }
 <= {
@@ -70,13 +69,34 @@
 
 { ( () ?states ) cm:runThroughTrace ?states } <= {} . 
 
+{ ?item cm:label ?item } <= { _:t log:notIncludes { ?item rdfs:label ?label } } . #. ?item log:uri ?uri } .
+{ ?item cm:label ?label } <= { ?item rdfs:label ?l . ( ?l " (" ?item  ")" ) string:concatenation ?label } .
+
+{ ?states cm:prettyprint ?pp }
+<= {
+    ?states graph:list ?lst .
+    ( { ?label state:all ?all }
+        { 
+            ?lst list:member { ?item state:all ?all } .
+            ?item cm:label ?label
+        }
+      ?labelsStates
+    ) log:collectAllIn _:y .
+
+    ?labelsStates log:conjunction ?pp
+} .
+
 {
-    _:t state:init ?init .
+    _:x state:init ?init .
     # "init" log:trace ?init .
     ?init cm:run ?next .
     
     ?trace a cm:Trace .
     ( ?trace ?next ) cm:runThroughTrace ?final .
+
+    ?final state:checkFinal ?final2 .
+    ?final2 cm:prettyprint ?labeledStates    
+
 } => {
-    _:t :out ?final .
+    _:t :out ?labeledStates .
 } .
