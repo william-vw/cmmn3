@@ -1791,20 +1791,28 @@ function CmmnRenderer(eventBus, styles, pathMap) {
   // attach markers /////////////////////////
 
   function attachTaskMarkers(p, element) {
+    console.log(element);
+     
+    var extraProperties = undefined;
+    if (element.id in window.extraMarkers) {
+      extraProperties = window.extraMarkers[element.id];
+    }
+
     var obj = getBusinessObject(element);
     var padding = 6;
 
     var markers = [];
 
-    if (isRequired(obj)) {
+    if (isRequired(obj) || (extraProperties !== undefined && 'isRequired' in extraProperties)) {
+      console.log("got so far");
       markers.push({ marker: 'RequiredMarker', width: 1 });
     }
 
-    if (isManualActivation(obj)) {
+    if (isManualActivation(obj) || (extraProperties !== undefined && 'isManualActivation' in extraProperties)) {
       markers.push({ marker: 'ManualActivationMarker', width: 14 });
     }
 
-    if (isRepeatable(obj)) {
+    if (isRepeatable(obj) || (extraProperties !== undefined && 'isRepeatable' in extraProperties)) {
       markers.push({ marker: 'RepetitionMarker', width: 14 });
     }
 

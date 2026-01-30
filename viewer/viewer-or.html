@@ -23,8 +23,9 @@
       .completed .djs-visual > :nth-child(1) { fill: deepskyblue !important }
       /* .error .djs-visual > :nth-child(1) { fill:rgb(255, 120, 120) !important } */
       .error .djs-visual > :nth-child(1) { stroke: red !important }
-      .sentryViolated .djs-visual > :nth-child(1) { fill: rgb(255, 120, 120) !important }
-      .requiredViolated .djs-visual > :nth-child(1) { fill: rgb(255, 120, 120) !important }
+      .sentryViolated .djs-visual > :nth-child(1) { stroke: red !important /* fill: rgb(255, 120, 120) !important */ }
+      .firstSymbolViolated .djs-visual > :nth-child(3) { stroke: red !important }
+      .secondSymbolViolated .djs-visual > :nth-child(4) { stroke: red !important }
 
       /* attachTaskMarkers() */
 
@@ -70,6 +71,8 @@
        */
       function openDiagram(cmmnXML) {
 
+        <extraMarkersPlaceholder>
+
         // import diagram
         cmmnViewer.importXML(cmmnXML, function(err) {
 
@@ -84,7 +87,7 @@
           // zoom to fit full viewport
           canvas.zoom('fit-viewport');
 
-          <placeholder>
+          <showStatesPlaceholder>
 
           // // attach an overlay to a node
           // overlays.add('PlanItem_000hrg1', 'note', {
