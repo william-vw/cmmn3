@@ -1,7 +1,7 @@
 from rdflib import Literal, Graph, BNode, RDF, RDFS, XSD, URIRef
 from rdflib.collection import Collection
 from rdflib.namespace import split_uri
-from cmmn3 import ST
+from cmmn3.ns import ST
 
 from util import uri_to_str
 

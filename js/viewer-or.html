@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>CMMN</title>
+
+    <!-- viewer distro -->
+    <script src="cmmn.js"></script>
+
+    <!-- needed for this example only -->
+    <script src="jquery.js"></script>
+
+    <!-- example styles -->
+    <style>
+      html, body, #canvas {
+        height: 100%;
+        padding: 0;
+        margin: 0;
+      }
+
+      .ready .djs-visual > :nth-child(1) { fill:  #c7ecf5 !important }
+      .active .djs-visual > :nth-child(1) { fill: #5cdeff !important }
+      .completed .djs-visual > :nth-child(1) { fill: deepskyblue !important }
+      /* .error .djs-visual > :nth-child(1) { fill:rgb(255, 120, 120) !important } */
+      .error .djs-visual > :nth-child(1) { stroke: red !important }
+      .sentryViolated .djs-visual > :nth-child(1) { stroke: red !important /* fill: rgb(255, 120, 120) !important */ }
+      .firstSymbolViolated .djs-visual > :nth-child(3) { stroke: red !important }
+      .secondSymbolViolated .djs-visual > :nth-child(4) { stroke: red !important }
+
+      /* attachTaskMarkers() */
+
+      /* .diagram-note {
+        background-color: rgba(66, 180, 21, 0.7);
+        color: White;
+        border-radius: 5px;
+        font-family: Arial;
+        font-size: 12px;
+        padding: 5px;
+        min-height: 16px;
+        width: 65px;
+        text-align: center;
+      }
+
+      .needs-discussion:not(.djs-connection) .djs-visual > :nth-child(1) {
+        stroke: rgba(66, 180, 21, 0.7) !important;
+        fill: fuchsia !important
+      } */
+    </style>
+  </head>
+  <body>
+    <div id="canvas"></div>
+
+    <script>
+      let cmmnXML = `<cmmnXmlPlaceholder>`
+    </script>
+
+    <script>
+      // viewer instance
+      var cmmnViewer = new CmmnJS({
+        container: '#canvas'
+      });
+
+      function showState(id, state, canvas, overlays) {
+          canvas.addMarker(id, state);
+      }
+
+      /**
+       * Open diagram in our viewer instance.
+       *
+       * @param {String} cmmnXML diagram to display
+       */
+      function openDiagram(cmmnXML) {
+
+        <extraMarkersPlaceholder>
+          
+        // import diagram
+        cmmnViewer.importXML(cmmnXML, function(err) {
+
+          if (err) {
+            return console.error('could not import CMMN 2.0 diagram', err);
+          }
+
+          // access viewer components
+          var canvas = cmmnViewer.get('canvas');
+          var overlays = cmmnViewer.get('overlays');
+
+          // zoom to fit full viewport
+          canvas.zoom('fit-viewport');
+
+          <showStatesPlaceholder>
+
+          // // attach an overlay to a node
+          // overlays.add('PlanItem_000hrg1', 'note', {
+          //   position: {
+          //     top: -5,
+          //     right: -5
+          //   },
+          //   html: '<div class="diagram-note">Is this really repeatable?</div>'
+          // });
+
+          // // add marker
+          // canvas.addMarker('PlanItem_000hrg1', 'needs-discussion');
+        });
+      }
+
+      // load XML from variable
+      openDiagram(cmmnXML);
+
+      // load external diagram file via AJAX and open it
+      // var diagramUrl = "file:///Users/wvw/git/pm/decl_cig/cmmn3/js/cap-all.cmmn"
+      // var diagramUrl = "./cap-all.cmmn"
+      // $.get(diagramUrl, openDiagram, 'text');
+      
+    </script>
+    <!--
+      Thanks for trying out our CMMN toolkit!
+
+      Related starters:
+      * https://raw.githubusercontent.com/bpmn-io/cmmn-js-examples/starter/modeler.html
+    -->
+  </body>
+</html>

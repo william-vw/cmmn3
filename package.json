@@ -1,5 +1,6 @@
 {
+  "type": "module",
   "dependencies": {
-    "eyeling": "^1.11.2"
+    "puppeteer": "^24.36.1"
   }
 }
