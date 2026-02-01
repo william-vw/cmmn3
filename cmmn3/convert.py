@@ -1,12 +1,12 @@
-import csv
+import os, csv
 from rdflib import Literal, Graph, BNode, RDF, RDFS, XSD, URIRef
 from rdflib.collection import Collection
 from cmmn3.ns import CM, ST, RE
 from util import rdf_coll, print_rdf_stmt
 from util import str_to_uri
 
-def convertLog(path, modelNs):
-    stmts = []
+def convertLog(path, modelNs, destFolder=None):
+    case_stmts = []
         
     with open(path, newline='') as fh:
         reader = csv.reader(fh, delimiter=',')
@@ -17,16 +17,22 @@ def convertLog(path, modelNs):
             if cur is None:
                 cur = case
             elif cur != case:
-                stmts.append( print_rdf_stmt(rdf_evts, RDF['type'], CM['Trace']) )
+                case_stmts.append( ( cur, print_rdf_stmt(rdf_evts, RDF['type'], CM['Trace']) ) )
                 cur = case; rdf_evts = []
             
             planItemUri = str_to_uri(evt, modelNs)
             rdf_evts.append( ( planItemUri, ST['Completed'], RE['observation'] ) )
     
     if cur is not None:
-        stmts.append( print_rdf_stmt(rdf_evts, RDF['type'], CM['Trace']) )
+        case_stmts.append( ( cur, print_rdf_stmt(rdf_evts, RDF['type'], CM['Trace']) ) )
     
-    return stmts
+    if destFolder is not None:
+        for case, stmt in case_stmts:
+            obsPath = os.path.join(destFolder, f"obs{case}.ttl")
+            with open(obsPath, 'w') as fh:
+                fh.write(stmt)
+    else:
+        return case_stmts
         
 
 def convertModel(itemObjs, modelNs, dest):
