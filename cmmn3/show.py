@@ -20,30 +20,32 @@ def updateViewer(errors, finals, itemObjs, orViewerPath, newViewerPath, xmlPath)
     showStates = []
     extraMarkers = []
 
-    for _, item, itemId, itemState in finals:
-        showStates.append(f"showState('{itemId}', '{itemState.lower()}', canvas, overlays);")
+    for _, item, itemState in finals:
+        visId = itemObjs[item]['id']
+        showStates.append(f"showState('{visId}', '{itemState.lower()}', canvas, overlays);")
         
-    for _, item, itemId, itemError, itemState  in errors:
+    for _, item, itemError, itemState  in errors:
         itemObj = itemObjs[item]
+        visId = itemObj['id']
         
         match (itemError):
             case 'readyToCompleted':
-                showStates.append(f"showState('{itemId}', 'error', canvas, overlays);")
+                showStates.append(f"showState('{visId}', 'error', canvas, overlays);")
                 for sentry in itemObj['sentries']['entry']:
                     showStates.append(f"showState('{sentry['id']}', 'sentryViolated', canvas, overlays);")
                     
             case 'inactiveToCompleted':
-                showStates.append(f"showState('{itemId}', 'error', canvas, overlays);")
+                showStates.append(f"showState('{visId}', 'error', canvas, overlays);")
             
             case 'mandatoryNotDone':
-                showStates.append(f"showState('{itemId}', 'error', canvas, overlays);")
-                showStates.append(f"showState('{itemId}', 'firstSymbolViolated', canvas, overlays);")
+                showStates.append(f"showState('{visId}', 'error', canvas, overlays);")
+                showStates.append(f"showState('{visId}', 'firstSymbolViolated', canvas, overlays);")
                 
             case 'nonRepetitiveMultipleCompleted':
-                showStates.append(f"showState('{itemId}', 'error', canvas, overlays);")
+                showStates.append(f"showState('{visId}', 'error', canvas, overlays);")
                 clsName = 'secondSymbolViolated' if (itemObj['mandatory']) else 'firstSymbolViolated'
-                showStates.append(f"showState('{itemId}', '{clsName}', canvas, overlays);")
-                extraMarkers.append(f"'{itemId}': {{ 'isRepeatable': true }}")
+                showStates.append(f"showState('{visId}', '{clsName}', canvas, overlays);")
+                extraMarkers.append(f"'{visId}': {{ 'isRepeatable': true }}")
                 
     showStatesJs = "\n".join(showStates)
     # print(showStatesJs)

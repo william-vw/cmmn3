@@ -3,7 +3,7 @@ import pandas as pd
 from util import run
 from cmmn3.parse import parseOut
 
-def reasonAll(modelPath, obsFolder, n3Path, itemObjs, printerr=False):
+def reasonAll(modelPath, obsFolder, n3Path, printerr=False):
     allErrors = []; allFinals = []
 
     for obsFile in sorted(os.listdir(obsFolder)):
@@ -14,11 +14,11 @@ def reasonAll(modelPath, obsFolder, n3Path, itemObjs, printerr=False):
         out = reason(modelPath, obsPath, n3Path, printerr=printerr)
         # print(out)
         
-        errors, finals = parseOut(out, case, itemObjs)
+        errors, finals = parseOut(out, case)
         allErrors.extend(errors); allFinals.extend(finals)
         
-    errorDf = pd.DataFrame(columns=['case', 'item', 'itemId', 'error', 'type'], data=allErrors)
-    finalDf = pd.DataFrame(columns=['case', 'item', 'itemId', 'type'], data=allFinals)
+    errorDf = pd.DataFrame(columns=['case', 'item', 'error', 'type'], data=allErrors)
+    finalDf = pd.DataFrame(columns=['case', 'item', 'type'], data=allFinals)
         
     return errorDf, finalDf
 

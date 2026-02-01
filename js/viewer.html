@@ -387,7 +387,7 @@
        */
       function openDiagram(cmmnXML) {
 
-        window.extraMarkers = {  }
+        window.extraMarkers = { 'PlanItem_10zx5c3': { 'isRepeatable': true } }
           
         // import diagram
         cmmnViewer.importXML(cmmnXML, function(err) {
@@ -413,7 +413,7 @@ showState('PlanItem_08x0xdn', 'active', canvas, overlays);
 showState('PlanItem_1bjqkao', 'inactive', canvas, overlays);
 showState('PlanItem_04z6f16', 'inactive', canvas, overlays);
 showState('PlanItem_1s8zhhx', 'completed', canvas, overlays);
-showState('PlanItem_10zx5c3', 'inactive', canvas, overlays);
+showState('PlanItem_10zx5c3', 'completed', canvas, overlays);
 showState('PlanItem_08e8toi', 'inactive', canvas, overlays);
 showState('PlanItem_0ntpscm', 'error', canvas, overlays);
 showState('PlanItem_0ntpscm', 'firstSymbolViolated', canvas, overlays);
@@ -426,7 +426,8 @@ showState('PlanItem_08x0xdn', 'error', canvas, overlays);
 showState('PlanItem_08x0xdn', 'firstSymbolViolated', canvas, overlays);
 showState('PlanItem_1s8zhhx', 'error', canvas, overlays);
 showState('PlanItem_10zx5c3', 'error', canvas, overlays);
-showState('PlanItem_10zx5c3', 'firstSymbolViolated', canvas, overlays);
+showState('PlanItem_10zx5c3', 'error', canvas, overlays);
+showState('PlanItem_10zx5c3', 'secondSymbolViolated', canvas, overlays);
 
           // // attach an overlay to a node
           // overlays.add('PlanItem_000hrg1', 'note', {

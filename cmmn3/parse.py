@@ -6,10 +6,10 @@ from cmmn3.ns import ST
 from util import uri_to_str
 
 # (
-#   [ ( 'case', 'item', 'itemId', 'error', 'state' ), ... ] , # errors
-#   [ ( 'case', 'item', 'itemId', 'state' ), ... ] # final states
+#   [ ( 'case', 'item', 'error', 'state' ), ... ] , # errors
+#   [ ( 'case', 'item', 'state' ), ... ] # final states
 # )
-def parseOut(out, case, itemObjs):
+def parseOut(out, case):
     g = Graph()
     g.parse(data=out)
 
@@ -17,7 +17,6 @@ def parseOut(out, case, itemObjs):
 
     for item, p, o in g.triples((None, ST['all'], None)):
         item = uri_to_str(split_uri(item)[1])
-        itemId = itemObjs[item]['id']
 
         states = [state for state in Collection(g, o)]
         for idx, state in enumerate(states):
@@ -25,13 +24,13 @@ def parseOut(out, case, itemObjs):
             _, typ = split_uri(typ)
 
             if idx == len(states) - 1:
-                finals.append((case, item, itemId, typ))
+                finals.append((case, item, typ))
 
             desc = Collection(g, dnode)
             if len(desc) > 1:
                 _, error = desc
                 _, error = split_uri(error)
-                errors.append((case, item, itemId, error, typ))
+                errors.append((case, item, error, typ))
 
     return errors, finals
 
