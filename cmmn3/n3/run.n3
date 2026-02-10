@@ -56,7 +56,7 @@
 { ( ?trace ?states ) cm:runThroughTrace ?final } 
 <= {
     ?trace e:firstRest ( ( ?item ?type ?reason ) ?trace2 ) .
-    
+
     ( ?item ?states ) state:isIn ( ?t ?obs0 ) .
     ( ?item ?states ) state:createNew ( ( ?type ?reason ) ?obs ) .
     # "obs" log:trace ?obs .
@@ -65,7 +65,20 @@
 
     ?states2 cm:run ?states3 .
 
-    ( ?trace2 ?states3 ) cm:runThroughTrace ?final
+    ( ?trace2 ?states3 ) cm:runThroughTrace ?final .
+
+    true log:callWithCut true .
+} .
+
+{ ( ?trace ?states ) cm:runThroughTrace ?final } 
+<= {
+    ?trace e:firstRest ( ( ?item ?type ?reason ) ?trace2 ) .
+
+    # unknown item
+    ( ?item ?states ) state:notIn true .
+    # "unknown item" log:trace ?item .
+
+    ( ?trace2 ?states ) cm:runThroughTrace ?final .
 } .
 
 { ( () ?states ) cm:runThroughTrace ?states } <= {} . 
@@ -86,7 +99,8 @@
     # "init" log:trace ?init .
     ?init cm:run ?next .
     
-    ?trace a cm:Trace .
+    # ?trace a cm:Trace .
+    ?trace cm:trace ?caseId .
     ( ?trace ?next ) cm:runThroughTrace ?final .
 
     ?final state:checkFinal ?final2 .

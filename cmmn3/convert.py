@@ -5,32 +5,43 @@ from cmmn3.ns import CM, ST, RE
 from util import rdf_coll, print_rdf_stmt
 from util import str_to_uri
 
-def convertLog(path, modelNs, destFolder=None):
+def convertLog(path, modelNs, destPath=None, singleFile=True):
+    
+    def to_trace_stmt(rdf_evts, case):
+        # return print_rdf_stmt(rdf_evts, RDF['type'], CM['Trace'])
+        return print_rdf_stmt(rdf_evts, CM['trace'], Literal(case))
+    
     case_stmts = []
-        
     with open(path, newline='') as fh:
-        reader = csv.reader(fh, delimiter=',')
+        reader = csv.DictReader(fh, delimiter=',')
         next(reader) # skip header
         
         cur = None; rdf_evts = []
-        for case, evt, ts in reader:
+        for row in reader:
+            case = row['case:concept:name']; evt = row['concept:name']; ts = row['time:timestamp']
+            
             if cur is None:
                 cur = case
             elif cur != case:
-                case_stmts.append( ( cur, print_rdf_stmt(rdf_evts, RDF['type'], CM['Trace']) ) )
+                case_stmts.append( ( cur, to_trace_stmt(rdf_evts, case) ) )
                 cur = case; rdf_evts = []
             
             planItemUri = str_to_uri(evt, modelNs)
             rdf_evts.append( ( planItemUri, ST['Completed'], RE['observation'] ) )
     
     if cur is not None:
-        case_stmts.append( ( cur, print_rdf_stmt(rdf_evts, RDF['type'], CM['Trace']) ) )
+        case_stmts.append( ( cur, to_trace_stmt(rdf_evts, case) ) )
     
-    if destFolder is not None:
-        for case, stmt in case_stmts:
-            obsPath = os.path.join(destFolder, f"obs{case}.ttl")
-            with open(obsPath, 'w') as fh:
-                fh.write(stmt)
+    if destPath:
+        if singleFile:
+            with open(destPath, 'w') as fh:
+                for case, stmt in case_stmts:
+                    fh.write(stmt + "\n")
+        else:
+            for case, stmt in case_stmts:
+                obsPath = os.path.join(destPath, f"obs{case}.ttl")
+                with open(obsPath, 'w') as fh:
+                    fh.write(stmt)
     else:
         return case_stmts
         

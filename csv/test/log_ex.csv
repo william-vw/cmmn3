@@ -1,0 +1,10 @@
+case:concept:name,concept:name,time:timestamp
+0,"oxygen saturation",2026-01-31 12:00:00
+0,"hospital admission",2026-01-31 12:00:01
+0,"routine bloodwork: CBC, electrolytes, renal function",2026-01-31 12:00:02
+0,"antibiotics",2026-01-31 12:00:03
+0,"oxygen saturation",2026-01-31 12:00:04
+0,"routine bloodwork: CBC, electrolytes, renal function",2026-01-31 12:00:05
+1,"oxygen saturation",2026-01-31 12:00:00
+1,"hospital admission",2026-01-31 12:00:01
+1,"antibiotics",2026-01-31 12:00:03

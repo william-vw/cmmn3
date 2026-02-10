@@ -24,6 +24,11 @@
     ?all list:last ( ?type ?desc ) .
 } .
 
+{ ( ?item ?states ) state:notIn true }
+<= {
+    ?states log:notIncludes { ?item state:all ?all } .
+} .
+
 { ( ?item ?states ) state:createNew ( ( ?type ?reason ) { ?item state:all ?all2 } ) } 
 <= {
     ?states log:includes { ?item state:all ?all } .
