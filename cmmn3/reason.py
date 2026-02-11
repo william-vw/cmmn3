@@ -18,8 +18,10 @@ def reasonAll(modelPath, obsPath, n3Path, printerr=False):
         for count, singleObs in enumerate(fh): # yeah, yeah ...      
             if count % 10 == 0:
                 print("count:", count)
+            if count > 0 and count % 100 == 0:
+                break
             
-            # i know ...
+            # i know!
             case = re.search("\(.*\)\s.*?\s\"(.*)\" \.", singleObs).group(1)
             # print(case)
             
@@ -32,8 +34,6 @@ def reasonAll(modelPath, obsPath, n3Path, printerr=False):
             
             errors, finals = parseOut(out, case)
             allErrors.extend(errors); allFinals.extend(finals)
-            
-            break
         
     errorDf = pd.DataFrame(columns=['case', 'item', 'error', 'type'], data=allErrors)
     finalDf = pd.DataFrame(columns=['case', 'item', 'type'], data=allFinals)
