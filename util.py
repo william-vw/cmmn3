@@ -46,3 +46,6 @@ def str_to_uri(str, ns):
 
 def uri_to_str(uri):    
     return urllib.parse.unquote(uri)
+
+def minmaxnorm(oldmin, oldmax, newmin, newmax, value):
+    return newmin + (value - oldmin) / (oldmax - oldmin) * (newmax - newmin)

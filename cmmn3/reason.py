@@ -18,7 +18,7 @@ def reasonAll(modelPath, obsPath, n3Path, printerr=False):
         for count, singleObs in enumerate(fh): # yeah, yeah ...      
             if count % 10 == 0:
                 print("count:", count)
-            if count > 0 and count % 100 == 0:
+            if count > 2: # and count % 100 == 0:
                 break
             
             # i know!
