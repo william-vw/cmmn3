@@ -19,11 +19,10 @@ def convertLog(path, modelNs, destPath=None, singleFile=True):
         cur = None; rdf_evts = []
         for row in reader:
             case = row['case:concept:name']; evt = row['concept:name']; ts = row['time:timestamp']
-            
             if cur is None:
                 cur = case
             elif cur != case:
-                case_stmts.append( ( cur, to_trace_stmt(rdf_evts, case) ) )
+                case_stmts.append( ( cur, to_trace_stmt(rdf_evts, cur) ) )
                 cur = case; rdf_evts = []
             
             planItemUri = str_to_uri(evt, modelNs)

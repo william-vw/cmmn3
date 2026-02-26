@@ -1,0 +1,10 @@
+> preconditions
+
+- change log format; attach metadata to each case
+here, as required by the pre-conditions
+
+- actually check preconditions based on metadata
+
+- update transition logic:
+not-done yet required activity only an error if its precondition is true
+    else, should not be executed anyway

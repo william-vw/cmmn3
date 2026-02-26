@@ -48,19 +48,25 @@ def showCase(out, case, itemObjs, cmmnXmlPath, imgPath):
     return runViewer("js", imgPath, printerr=True)
 
 
-def showErrors(out, itemObjs, cmmnXmlPath, imgPath):
-
-    def aggregate_errors(out):
+def aggregateErrors(out):
         errors, finals = out
         
+        # e.g., each case+item may has multiple "nonRepetitiveMultipleCompleted" errors
+        # stop these from skewing the results
+        nondupl_err = errors.groupby(['case', 'item', 'error']).head(1)
+
         num_cases = len(finals['case'].unique())
-        item_cnt = errors.groupby('item').apply(lambda g: round(len(g) / num_cases * 100)).clip(0, 100).reset_index(name='total_perc')
-        error_cnt =  errors.groupby([ 'item', 'error' ]).apply(lambda g: round(len(g) / num_cases * 100)).clip(0, 100).reset_index(name='error_perc')
+        
+        item_cnt = nondupl_err.groupby('item').apply(lambda g: len(g)).reset_index(name='item_cnt')
+        item_cnt['item_perc'] = item_cnt['item_cnt'] / num_cases * 100
 
-        all_errors = item_cnt.merge(error_cnt)
-        all_errors
+        item_error_cnt = nondupl_err.groupby([ 'item', 'error' ]).apply(lambda g: len(g)).reset_index(name='item_error_cnt')
+        item_error_cnt['item_error_perc'] = item_error_cnt['item_error_cnt'] / num_cases * 100
 
-        return ( ( g.iloc[0]['item'], g.iloc[0]['total_perc'], ( ( gr['error'], gr['error_perc'] ) for i2, gr in g.iterrows() ) ) for i, g in all_errors.groupby('item') )
+        return item_cnt.merge(item_error_cnt)
+
+
+def showErrors(agg_errors, itemObjs, cmmnXmlPath, imgPath):
 
     def getErrorUpdates(errors, itemObjs):
         vis = { 'showStates': set(), 'extraMarkers': set(), 'extraCss': set() }
@@ -89,7 +95,8 @@ def showErrors(out, itemObjs, cmmnXmlPath, imgPath):
             
         return vis
 
-    agg_errors = aggregate_errors(out)
+
+    agg_errors = ( ( g.iloc[0]['item'], g.iloc[0]['total_perc'], ( ( gr['error'], gr['error_perc'] ) for i2, gr in g.iterrows() ) ) for i, g in agg_errors.groupby('item') )
     vis = getErrorUpdates(agg_errors, itemObjs)
 
     print(vis)

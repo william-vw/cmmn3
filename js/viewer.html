@@ -27,10 +27,7 @@
       .firstSymbolViolated .djs-visual > :nth-child(3) { stroke: red !important }
       .secondSymbolViolated .djs-visual > :nth-child(4) { stroke: red !important }
 
-      .firstSymbolViolated_0 .djs-visual > :nth-child(3) { stroke: hsl(0, 100%, 40.0%) !important; stroke-width: 3px !important }
-.error_0 .djs-visual > :nth-child(1) { stroke: hsl(0, 100%, 40.0%) !important; stroke-width: 5px !important }
-.secondSymbolViolated_0 .djs-visual > :nth-child(4) { stroke: hsl(0, 100%, 40.0%) !important; stroke-width: 3px !important }
-.firstSymbolViolated_33 .djs-visual > :nth-child(3) { stroke: hsl(0, 100%, 53.2%) !important; stroke-width: 3px !important }
+      
 
       /* attachTaskMarkers() */
 
@@ -408,17 +405,28 @@
           // zoom to fit full viewport
           canvas.zoom('fit-viewport');
 
-          showState('PlanItem_0xchgvg', 'error_0', canvas, overlays);
-showState('PlanItem_10zx5c3', 'firstSymbolViolated_33', canvas, overlays);
-showState('PlanItem_1s8zhhx', 'error_0', canvas, overlays);
-showState('PlanItem_0ntpscm', 'error_0', canvas, overlays);
-showState('PlanItem_1i0a7li', 'error_0', canvas, overlays);
-showState('PlanItem_0xchgvg', 'firstSymbolViolated_0', canvas, overlays);
-showState('PlanItem_10zx5c3', 'error_0', canvas, overlays);
-showState('PlanItem_1s8zhhx', 'firstSymbolViolated_0', canvas, overlays);
-showState('PlanItem_0ntpscm', 'firstSymbolViolated_0', canvas, overlays);
-showState('PlanItem_1i0a7li', 'firstSymbolViolated_0', canvas, overlays);
-showState('PlanItem_10zx5c3', 'secondSymbolViolated_0', canvas, overlays);
+          showState('PlanItem_0ntpscm', firstSymbolViolated, canvas, overlays);
+showState('PlanItem_000hrg1', ready, canvas, overlays);
+showState('PlanItem_0xchgvg', ready, canvas, overlays);
+showState('PlanItem_1hc9qyp', ready, canvas, overlays);
+showState('PlanItem_10zx5c3', secondSymbolViolated, canvas, overlays);
+showState('PlanItem_1i0a7li', firstSymbolViolated, canvas, overlays);
+showState('PlanItem_1i0a7li', ready, canvas, overlays);
+showState('PlanItem_0ntpscm', error, canvas, overlays);
+showState('PlanItem_0ntpscm', ready, canvas, overlays);
+showState('PlanItem_1bjqkao', inactive, canvas, overlays);
+showState('PlanItem_08x0xdn', completed, canvas, overlays);
+showState('PlanItem_04z6f16', inactive, canvas, overlays);
+showState('PlanItem_10zx5c3', error, canvas, overlays);
+showState('PlanItem_1s8zhhx', firstSymbolViolated, canvas, overlays);
+showState('PlanItem_1s8zhhx', error, canvas, overlays);
+showState('PlanItem_0xchgvg', firstSymbolViolated, canvas, overlays);
+showState('PlanItem_1i0a7li', error, canvas, overlays);
+showState('PlanItem_08e8toi', inactive, canvas, overlays);
+showState('PlanItem_10zx5c3', completed, canvas, overlays);
+showState('PlanItem_1s8zhhx', inactive, canvas, overlays);
+showState('PlanItem_0xchgvg', error, canvas, overlays);
+showState('PlanItem_1i1l7uj', active, canvas, overlays);
 
           // // attach an overlay to a node
           // overlays.add('PlanItem_000hrg1', 'note', {
