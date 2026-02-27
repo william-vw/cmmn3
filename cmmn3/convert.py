@@ -94,6 +94,7 @@ def convertState(evtPath, dynPath, staticPath, modelNs, destPath=None):
         if case == 88:
             break
             
+    return g
 
 def convertLog(path, modelNs, destPath=None, singleFile=True):
     
