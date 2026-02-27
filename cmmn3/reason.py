@@ -22,7 +22,7 @@ def reasonAll(modelPath, obsPath, n3Path, printerr=False):
                 break
             
             # i know!
-            case = re.search("\(.*\)\s.*?\s\"(.*)\" \.", singleObs).group(1)
+            case = re.search("<.*?_(\d+)>\s.*\s\(.*\) \.", singleObs).group(1)
             # print(case)
             
             singleObsPath = os.path.join(os.path.dirname(obsPath), "single_obs.ttl")

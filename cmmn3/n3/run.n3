@@ -100,7 +100,7 @@
     ?init cm:run ?next .
     
     # ?trace a cm:Trace .
-    ?trace cm:trace ?caseId .
+    ?case cm:trace ?trace .
     ( ?trace ?next ) cm:runThroughTrace ?final .
 
     ?final state:checkFinal ?final2 .
