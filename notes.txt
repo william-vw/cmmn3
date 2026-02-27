@@ -1,3 +1,8 @@
+> new paradigm XD
+model patient state changes
+e.g., case 88: multiple BPs, changes over time
+
+
 > new model elements: 
 . min-nr stage
 sometimes, all tests have to be done; other cases, a few

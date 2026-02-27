@@ -1,3 +1,9 @@
+> cmmn models
+
+- cap
+hospital admission: change from event to precondition
+
+
 > preconditions
 
 - change log format; attach metadata to each case
@@ -8,3 +14,8 @@ here, as required by the pre-conditions
 - update transition logic:
 not-done yet required activity only an error if its precondition is true
     else, should not be executed anyway
+
+
+> error vis
+
+- implement better vis
