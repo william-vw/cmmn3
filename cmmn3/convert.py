@@ -42,16 +42,6 @@ def convertState(evtPath, dynPath, staticPath, modelNs, destPath=None):
     def convert_dyn_state(case_uri, stat_state, diagn_state, dyn_state, modelNs):
         g = Graph()
 
-        for _, row in stat_state.iterrows():
-            concept = concept_map[row['state']]
-            fhir_obs(g, case_uri, concept)
-
-        for diagn_code in diagn_state:
-            # throws error if not found
-            descr = icd.get_description(diagn_code)
-            concept = [ icd10_sys, ICD[diagn_code], descr ]
-            fhir_cond(g, case_uri, concept)
-
         for _, row in dyn_state.iterrows():
             concept = concept_map[row['concept:name']]
             value = row['value']
@@ -67,8 +57,11 @@ def convertState(evtPath, dynPath, staticPath, modelNs, destPath=None):
             fhir_obs(g, case_uri, concept)
 
         for diagn_code in diagn_state:
-            # throws error if not found
-            descr = icd.get_description(diagn_code)
+            if not icd.is_valid_item(diagn_code):
+                print("cannot find ICD-10 item:", diagn_code)
+                descr = "unknown"
+            else:
+                descr = icd.get_description(diagn_code)
             concept = [ icd10_sys, ICD[diagn_code], descr ]
             fhir_cond(g, case_uri, concept)
 
@@ -129,8 +122,8 @@ def convertState(evtPath, dynPath, staticPath, modelNs, destPath=None):
         dyng.add(( case_uri, CM['alignment'], rdf_coll(dyng, *align) ))
         dyng.add(( case_uri, CM['dynstates'], rdf_coll(dyng, *states) ))
 
-        if case == 88:
-            break
+        # if case == 88:
+        #     break
     
     if destPath is not None:
         statg.serialize(format="n3", destination=os.path.join(destPath, "static.n3"))
