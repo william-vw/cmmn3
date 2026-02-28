@@ -2,7 +2,7 @@ import os, subprocess, re, multiprocess
 from rdflib import Namespace, Literal, Graph, BNode, RDF, RDFS, XSD, URIRef
 from rdflib.collection import Collection
 import collections
-
+import urllib.parse
 import time
 
 def run(cmd, get_time=True, printerr=False):
@@ -36,9 +36,6 @@ def print_rdf(term):
 def print_rdf_stmt(s, p, o):
     return print_rdf(s) + " " + print_rdf(p) + " " + print_rdf(o) + " ."
 
-
-import urllib.parse
-
 def str_to_uri(str, ns):
     quoted = urllib.parse.quote(str)
     # quoted = quoted.replace("%20", "_").replace('%3A', ":")
@@ -49,3 +46,6 @@ def uri_to_str(uri):
 
 def minmaxnorm(oldmin, oldmax, newmin, newmax, value):
     return newmin + (value - oldmin) / (oldmax - oldmin) * (newmax - newmin)
+
+def parse_list(str):
+    return str[2: -2].split("', '")

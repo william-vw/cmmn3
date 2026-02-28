@@ -1,0 +1,57 @@
+@prefix ns1: <http://rdf.org/cmmn#> .
+@prefix ns2: <http://hl7.org/fhir/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://ontario.org/qbp/cap#case_13> ns1:statstate {
+        <http://ontario.org/qbp/cap#case_13> ns2:subjectOf [ a ns2:Condition ;
+                    rdfs:label "Pneumonia, organism unspecified" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/J18> ],
+                [ a ns2:Condition ;
+                    rdfs:label "Shock, not elsewhere classified" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/R57> ],
+                [ a ns2:Condition ;
+                    rdfs:label "Special screening examination for infectious and parasitic diseases" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/Z11> ],
+                [ a ns2:Condition ;
+                    rdfs:label "Asymptomatic human immunodeficiency virus [HIV] infection status" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/Z21> ],
+                [ a ns2:Condition ;
+                    rdfs:label "Problems related to housing and economic circumstances" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/Z59> ],
+                [ a ns2:Condition ;
+                    rdfs:label "Other sepsis" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/A41> ],
+                [ a ns2:Condition ;
+                    rdfs:label "Other disorders of pancreatic internal secretion" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/E16> ],
+                [ a ns2:Condition ;
+                    rdfs:label "Mental and behavioural disorders due to multiple drug use and use of other psychoactive substances" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/F19> ],
+                [ a ns2:Condition ;
+                    rdfs:label "Convulsions, not elsewhere classified" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/R56> ],
+                [ a ns2:Condition ;
+                    rdfs:label "Carrier of infectious disease" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/Z22> ],
+                [ a ns2:Condition ;
+                    rdfs:label "Other medical care" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/Z51> ] .
+
+    } .
+
+<http://ontario.org/qbp/cap#case_88> ns1:statstate {
+        <http://ontario.org/qbp/cap#case_88> ns2:subjectOf [ a ns2:Condition ;
+                    rdfs:label "Acute renal failure" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/N17> ],
+                [ a ns2:Condition ;
+                    rdfs:label "Other disorders of fluid, electrolyte and acid-base balance" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/E87> ],
+                [ a ns2:Condition ;
+                    rdfs:label "Unspecified diabetes mellitus" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/E14> ],
+                [ a ns2:Condition ;
+                    rdfs:label "Pneumonia, organism unspecified" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/J18> ] .
+
+    } .
+

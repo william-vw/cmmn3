@@ -3,43 +3,74 @@ import pandas as pd
 from rdflib import Literal, Graph, BNode, RDF, RDFS, XSD, URIRef
 from rdflib.collection import Collection
 from rdflib.graph import QuotedGraph
-from cmmn3.ns import CM, ST, RE, SCT, FHR
-from util import rdf_coll, print_rdf_stmt
-from util import str_to_uri
+from cmmn3.ns import CM, ST, RE, SCT, FHR, ICD
+from util import rdf_coll, print_rdf_stmt, str_to_uri, parse_list
+import simple_icd_10 as icd
+
+sct_sys = URIRef("http://www.snomed.org")
+icd10_sys = URIRef("http://hl7.org/fhir/sid/icd-10")
+
+concept_map = {
+    "BP systolic": ( sct_sys, SCT['271649006'], "Systolic blood pressure" ),
+    "BP diastolic": ( sct_sys, SCT['271650006'], "Diastolic blood pressure" ),
+    "Heart rate": ( sct_sys, SCT['364075005'], "Heart rate" ),
+    "Body Temperature ": ( sct_sys, SCT['386725007'], "Body temperature" ),
+    "Respiratory rate": ( sct_sys, SCT['364062005'], "Respiration observable" ),
+    "admitted": ( sct_sys, SCT['308540004'], "Inpatient stay" )
+}
 
 def convertState(evtPath, dynPath, staticPath, modelNs, destPath=None):
-    sct_sys = URIRef("http://www.snomed.org")
-    concept_map = {
-        "BP systolic": ( sct_sys, SCT['271649006'], "Systolic blood pressure" ),
-        "BP diastolic": ( sct_sys, SCT['271650006'], "Diastolic blood pressure" ),
-        "Heart rate": ( sct_sys, SCT['364075005'], "Heart rate" ),
-        "Body Temperature ": ( sct_sys, SCT['386725007'], "Body temperature" ),
-        "Respiratory rate": ( sct_sys, SCT['364062005'], "Respiration observable" ),
-        "admitted": ( sct_sys, SCT['308540004'], "Inpatient stay" )
-    }
 
-    def fhir_obs(g, subj, coding, value=None):
-        obs = BNode()
+    def fhir_thing(g, subj, coding, type, value=None):
+        thing = BNode()
         # vastly simplified for now
         # e.g., https://build.fhir.org/observation-example-f001-glucose.ttl.html
-        g.add(( subj, FHR["subjectOf"], obs ))
-        # g.add(( obs, FHR["subject"], subj ))
-        g.add(( obs, FHR["code"], coding[1] ))
-        g.add(( obs, RDFS["label"], Literal(coding[2]) ))
+        g.add(( subj, FHR["subjectOf"], thing ))
+        # g.add(( thing, FHR["subject"], subj ))
+        g.add(( thing, RDF['type'], type ))
+        g.add(( thing, FHR["code"], coding[1] ))
+        g.add(( thing, RDFS["label"], Literal(coding[2]) ))
         if value is not None:
-            g.add(( obs, FHR["value"], Literal(value, datatype=XSD['decimal']) ))
+            g.add(( thing, FHR["value"], Literal(value, datatype=XSD['decimal']) ))
 
-    def convert_state(case_uri, stat_state, dyn_state, modelNs):
+    def fhir_cond(g, subj, coding):
+        fhir_thing(g, subj, coding, FHR['Condition'])
+
+    def fhir_obs(g, subj, coding, value=None):
+        fhir_thing(g, subj, coding, FHR['Observation'], value)
+
+    def convert_dyn_state(case_uri, stat_state, diagn_state, dyn_state, modelNs):
         g = Graph()
 
         for _, row in stat_state.iterrows():
             concept = concept_map[row['state']]
             fhir_obs(g, case_uri, concept)
 
+        for diagn_code in diagn_state:
+            # throws error if not found
+            descr = icd.get_description(diagn_code)
+            concept = [ icd10_sys, ICD[diagn_code], descr ]
+            fhir_cond(g, case_uri, concept)
+
         for _, row in dyn_state.iterrows():
             concept = concept_map[row['concept:name']]
             value = row['value']
             fhir_obs(g, case_uri, concept, value)
+
+        return QuotedGraph(g.store, g.identifier)
+
+    def convert_stat_state(case_uri, stat_state, diagn_state, modelNs):
+        g = Graph()
+
+        for _, row in stat_state.iterrows():
+            concept = concept_map[row['state']]
+            fhir_obs(g, case_uri, concept)
+
+        for diagn_code in diagn_state:
+            # throws error if not found
+            descr = icd.get_description(diagn_code)
+            concept = [ icd10_sys, ICD[diagn_code], descr ]
+            fhir_cond(g, case_uri, concept)
 
         return QuotedGraph(g.store, g.identifier)
 
@@ -53,7 +84,7 @@ def convertState(evtPath, dynPath, staticPath, modelNs, destPath=None):
     sdf = pd.read_csv(staticPath, index_col=0)
     edf = pd.read_csv(evtPath, index_col=0)
 
-    g = Graph()
+    statg = Graph(); dyng = Graph()
     total_cases = len(edf['case:concept:name'].unique())
     for cnt, (case, group) in enumerate(edf.groupby('case:concept:name')):
         if cnt % 100 == 0:
@@ -64,8 +95,11 @@ def convertState(evtPath, dynPath, staticPath, modelNs, destPath=None):
         states = []; idx_state = {}; 
         align = [] # aligns each event with state ID
 
-        # get static state
+        # get static state (incl. diagnoses)
         stat_state = sdf[sdf['case:concept:name']==case]
+        diagn_state = parse_list(group.iloc[0]['all_diagnoses'])
+        stat_state_qg = convert_stat_state(case_uri, stat_state, diagn_state, modelNs)
+        statg.add(( case_uri, CM['statstate'], stat_state_qg ))
 
         # print(case)
         for index, row in group.iterrows():
@@ -85,23 +119,24 @@ def convertState(evtPath, dynPath, staticPath, modelNs, destPath=None):
             else:
                 # add new state & get ID
                 state_nr = len(states)
-                states.append(convert_state(case_uri, stat_state, dyn_state, modelNs))
+                states.append(convert_dyn_state(case_uri, stat_state, diagn_state, dyn_state, modelNs))
                 idx_state[idx] = state_nr
             
             # add state ID for event
             align.append(Literal(state_nr))
 
         # afterwards, add event alignment & states to graph
-        g.add(( case_uri, CM['alignment'], rdf_coll(g, *align) ))
-        g.add(( case_uri, CM['states'], rdf_coll(g, *states) ))
+        dyng.add(( case_uri, CM['alignment'], rdf_coll(dyng, *align) ))
+        dyng.add(( case_uri, CM['dynstates'], rdf_coll(dyng, *states) ))
 
-        # if case == 88:
-        #     break
+        if case == 88:
+            break
     
     if destPath is not None:
-        g.serialize(format="n3", destination=destPath)
+        statg.serialize(format="n3", destination=os.path.join(destPath, "static.n3"))
+        dyng.serialize(format="n3", destination=os.path.join(destPath, "dynamic.n3"))
     else:
-        return g
+        return statg, dyng
 
 def convertLog(path, modelNs, destPath=None, singleFile=True):
     
