@@ -54,7 +54,11 @@ def convertState(evtPath, dynPath, staticPath, modelNs, destPath=None):
     edf = pd.read_csv(evtPath, index_col=0)
 
     g = Graph()
-    for case, group in edf.groupby('case:concept:name'):
+    total_cases = len(edf['case:concept:name'].unique())
+    for cnt, (case, group) in enumerate(edf.groupby('case:concept:name')):
+        if cnt % 100 == 0:
+            print(f"case #{cnt} / {total_cases}")
+
         case_uri = str_to_uri(f"case_{case}", modelNs)
 
         states = []; idx_state = {}; 
@@ -91,10 +95,13 @@ def convertState(evtPath, dynPath, staticPath, modelNs, destPath=None):
         g.add(( case_uri, CM['alignment'], rdf_coll(g, *align) ))
         g.add(( case_uri, CM['states'], rdf_coll(g, *states) ))
 
-        if case == 88:
-            break
-            
-    return g
+        # if case == 88:
+        #     break
+    
+    if destPath is not None:
+        g.serialize(format="n3", destination=destPath)
+    else:
+        return g
 
 def convertLog(path, modelNs, destPath=None, singleFile=True):
     
