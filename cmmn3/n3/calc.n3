@@ -1,11 +1,57 @@
+@prefix math: <http://www.w3.org/2000/10/swap/math#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix log: <http://www.w3.org/2000/10/swap/log#> .
 @prefix list: <http://www.w3.org/2000/10/swap/list#> .
+@prefix fh: <http://hl7.org/fhir/> .
+@prefix icd: <http://hl7.org/fhir/sid/icd-10/> .
+@prefix sct: <http://snomed.info/id/> .
 @prefix : <http://rdf.org/med/calc#> .
 
-{
-    ?p 
+# CRB-65
 
-} <= {
+{ ?p :crb_65 ?score } 
+<= {
+    ( 1 { ?p :crb_65_term ?nr } ?terms )
+        log:collectAllIn _:t .
 
+    ?terms math:sum ?score
+} .
+
+{ ?p :crb_65_term 1 } 
+<= {
+    # confusion derived from diagnostic codes
+    ?p!fh:subjectOf!fh:code list:in ( icd:R410 icd:F058 icd:F448 icd:R55 icd:G4021 icd:G4020 icd:G4011 icd:G4010 )
+} .
+
+{ ?p :crb_65_term 2 } 
+<= {
+    ?p fh:subjectOf ?o . 
+    ?o fh:code sct:364062005 ; # respiration
+        fh:value ?v .
+    ?v math:notLessThan 30 
+} .
+
+{ ?p :crb_65_term 3 } 
+<= { ?p :crb_65_bp ?nr } .
+
+{ ?p :crb_65_bp 1 } 
+<= {
+    ?p fh:subjectOf ?o . 
+    ?o fh:code sct:271649006 ; # systolic
+        fh:value ?v .
+    ?v math:lessThan 90
+} .
+
+{ ?p :crb_65_bp 2 } 
+<= {
+    ?p fh:subjectOf ?o . 
+    ?o fh:code sct:271650006 ; # diastolic
+        fh:value ?v .
+    ?v math:notGreaterThan 60
+} .
+
+{ ?p :crb_65_term 4 } 
+<= {
+    ?p fh:birthDate ?age . # TODO
+    ?age math:notLessThan 65
 } .

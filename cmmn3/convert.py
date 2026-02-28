@@ -19,7 +19,7 @@ concept_map = {
     "admitted": ( sct_sys, SCT['308540004'], "Inpatient stay" )
 }
 
-def convertState(evtPath, dynPath, staticPath, modelNs, destPath=None):
+def convertState(evtPath, dynPath, modelNs, destPath=None):
 
     def fhir_thing(g, subj, coding, type, value=None):
         thing = BNode()
@@ -39,7 +39,7 @@ def convertState(evtPath, dynPath, staticPath, modelNs, destPath=None):
     def fhir_obs(g, subj, coding, value=None):
         fhir_thing(g, subj, coding, FHR['Observation'], value)
 
-    def convert_dyn_state(case_uri, stat_state, diagn_state, dyn_state, modelNs):
+    def convert_dyn_state(case_uri, dyn_state, modelNs):
         g = Graph()
 
         for _, row in dyn_state.iterrows():
@@ -49,14 +49,15 @@ def convertState(evtPath, dynPath, staticPath, modelNs, destPath=None):
 
         return QuotedGraph(g.store, g.identifier)
 
-    def convert_stat_state(case_uri, stat_state, diagn_state, modelNs):
+    def convert_stat_state(case_uri, stat_state, modelNs):
         g = Graph()
 
-        for _, row in stat_state.iterrows():
-            concept = concept_map[row['state']]
+        if stat_state['discharge_disposition'].startswith("Admit to reporting facility as inpatient"):
+            concept = concept_map['admitted']
             fhir_obs(g, case_uri, concept)
 
-        for diagn_code in diagn_state:
+        diagn_codes = parse_list(stat_state['all_diagnoses'])
+        for diagn_code in diagn_codes:
             if not icd.is_valid_item(diagn_code):
                 print("cannot find ICD-10 item:", diagn_code)
                 descr = "unknown"
@@ -64,6 +65,9 @@ def convertState(evtPath, dynPath, staticPath, modelNs, destPath=None):
                 descr = icd.get_description(diagn_code)
             concept = [ icd10_sys, ICD[diagn_code], descr ]
             fhir_cond(g, case_uri, concept)
+
+        age = int(stat_state['age'])
+        g.add(( case_uri, FHR['birthDate'], Literal(age) ))
 
         return QuotedGraph(g.store, g.identifier)
 
@@ -74,7 +78,6 @@ def convertState(evtPath, dynPath, staticPath, modelNs, destPath=None):
     dtimes = ddf.rename({"time:timestamp": "time:from"}, axis=1)
     # dtimes[dtimes['case:concept:name']==88]
 
-    sdf = pd.read_csv(staticPath, index_col=0)
     edf = pd.read_csv(evtPath, index_col=0)
 
     statg = Graph(); dyng = Graph()
@@ -89,9 +92,8 @@ def convertState(evtPath, dynPath, staticPath, modelNs, destPath=None):
         align = [] # aligns each event with state ID
 
         # get static state (incl. diagnoses)
-        stat_state = sdf[sdf['case:concept:name']==case]
-        diagn_state = parse_list(group.iloc[0]['all_diagnoses'])
-        stat_state_qg = convert_stat_state(case_uri, stat_state, diagn_state, modelNs)
+        stat_state = group.iloc[0]
+        stat_state_qg = convert_stat_state(case_uri, stat_state, modelNs)
         statg.add(( case_uri, CM['statstate'], stat_state_qg ))
 
         # print(case)
@@ -112,7 +114,7 @@ def convertState(evtPath, dynPath, staticPath, modelNs, destPath=None):
             else:
                 # add new state & get ID
                 state_nr = len(states)
-                states.append(convert_dyn_state(case_uri, stat_state, diagn_state, dyn_state, modelNs))
+                states.append(convert_dyn_state(case_uri, dyn_state, modelNs))
                 idx_state[idx] = state_nr
             
             # add state ID for event
