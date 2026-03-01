@@ -3,17 +3,14 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://ontario.org/qbp/cap#case_13> ns1:statstate {
+<http://ontario.org/qbp/cap#case_13> ns1:stat_ctx {
         <http://ontario.org/qbp/cap#case_13> ns2:birthDate 56 ;
             ns2:subjectOf [ a ns2:Condition ;
+                    rdfs:label "Other disorders of pancreatic internal secretion" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/E16> ],
+                [ a ns2:Condition ;
                     rdfs:label "Special screening examination for infectious and parasitic diseases" ;
                     ns2:code <http://hl7.org/fhir/sid/icd-10/Z11> ],
-                [ a ns2:Condition ;
-                    rdfs:label "Mental and behavioural disorders due to multiple drug use and use of other psychoactive substances" ;
-                    ns2:code <http://hl7.org/fhir/sid/icd-10/F19> ],
-                [ a ns2:Condition ;
-                    rdfs:label "Convulsions, not elsewhere classified" ;
-                    ns2:code <http://hl7.org/fhir/sid/icd-10/R56> ],
                 [ a ns2:Condition ;
                     rdfs:label "Problems related to housing and economic circumstances" ;
                     ns2:code <http://hl7.org/fhir/sid/icd-10/Z59> ],
@@ -24,29 +21,35 @@
                     rdfs:label "Other medical care" ;
                     ns2:code <http://hl7.org/fhir/sid/icd-10/Z51> ],
                 [ a ns2:Condition ;
-                    rdfs:label "Pneumonia, organism unspecified" ;
-                    ns2:code <http://hl7.org/fhir/sid/icd-10/J18> ],
+                    rdfs:label "Carrier of infectious disease" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/Z22> ],
                 [ a ns2:Condition ;
-                    rdfs:label "Asymptomatic human immunodeficiency virus [HIV] infection status" ;
-                    ns2:code <http://hl7.org/fhir/sid/icd-10/Z21> ],
+                    rdfs:label "Convulsions, not elsewhere classified" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/R56> ],
                 [ a ns2:Observation ;
                     rdfs:label "Inpatient stay" ;
                     ns2:code <http://snomed.info/id/308540004> ],
                 [ a ns2:Condition ;
+                    rdfs:label "Pneumonia, organism unspecified" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/J18> ],
+                [ a ns2:Condition ;
                     rdfs:label "Shock, not elsewhere classified" ;
                     ns2:code <http://hl7.org/fhir/sid/icd-10/R57> ],
                 [ a ns2:Condition ;
-                    rdfs:label "Carrier of infectious disease" ;
-                    ns2:code <http://hl7.org/fhir/sid/icd-10/Z22> ],
+                    rdfs:label "Asymptomatic human immunodeficiency virus [HIV] infection status" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/Z21> ],
                 [ a ns2:Condition ;
-                    rdfs:label "Other disorders of pancreatic internal secretion" ;
-                    ns2:code <http://hl7.org/fhir/sid/icd-10/E16> ] .
+                    rdfs:label "Mental and behavioural disorders due to multiple drug use and use of other psychoactive substances" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/F19> ] .
 
     } .
 
-<http://ontario.org/qbp/cap#case_88> ns1:statstate {
-        <http://ontario.org/qbp/cap#case_88> ns2:birthDate 83 ;
+<http://ontario.org/qbp/cap#case_88> ns1:stat_ctx {
+        <http://ontario.org/qbp/cap#case_88> ns2:birthDate 64 ;
             ns2:subjectOf [ a ns2:Condition ;
+                    rdfs:label "Pneumonia, organism unspecified" ;
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/J18> ],
+                [ a ns2:Condition ;
                     rdfs:label "Other disorders of fluid, electrolyte and acid-base balance" ;
                     ns2:code <http://hl7.org/fhir/sid/icd-10/E87> ],
                 [ a ns2:Condition ;
@@ -54,10 +57,7 @@
                     ns2:code <http://hl7.org/fhir/sid/icd-10/E14> ],
                 [ a ns2:Condition ;
                     rdfs:label "Acute renal failure" ;
-                    ns2:code <http://hl7.org/fhir/sid/icd-10/N17> ],
-                [ a ns2:Condition ;
-                    rdfs:label "Pneumonia, organism unspecified" ;
-                    ns2:code <http://hl7.org/fhir/sid/icd-10/J18> ] .
+                    ns2:code <http://hl7.org/fhir/sid/icd-10/N17> ] .
 
     } .
 

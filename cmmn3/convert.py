@@ -19,7 +19,7 @@ concept_map = {
     "admitted": ( sct_sys, SCT['308540004'], "Inpatient stay" )
 }
 
-def convertState(evtPath, dynPath, modelNs, destPath=None):
+def convertCtx(evtPath, dynPath, modelNs, destPath=None):
 
     def fhir_thing(g, subj, coding, type, value=None):
         thing = BNode()
@@ -39,24 +39,24 @@ def convertState(evtPath, dynPath, modelNs, destPath=None):
     def fhir_obs(g, subj, coding, value=None):
         fhir_thing(g, subj, coding, FHR['Observation'], value)
 
-    def convert_dyn_state(case_uri, dyn_state, modelNs):
+    def convert_dyn_ctx(case_uri, dyn_ctx, modelNs):
         g = Graph()
 
-        for _, row in dyn_state.iterrows():
+        for _, row in dyn_ctx.iterrows():
             concept = concept_map[row['concept:name']]
             value = row['value']
             fhir_obs(g, case_uri, concept, value)
 
         return QuotedGraph(g.store, g.identifier)
 
-    def convert_stat_state(case_uri, stat_state, modelNs):
+    def convert_stat_ctx(case_uri, stat_ctx, modelNs):
         g = Graph()
 
-        if stat_state['discharge_disposition'].startswith("Admit to reporting facility as inpatient"):
+        if stat_ctx['discharge_disposition'].startswith("Admit to reporting facility as inpatient"):
             concept = concept_map['admitted']
             fhir_obs(g, case_uri, concept)
 
-        diagn_codes = parse_list(stat_state['all_diagnoses'])
+        diagn_codes = parse_list(stat_ctx['all_diagnoses'])
         for diagn_code in diagn_codes:
             if not icd.is_valid_item(diagn_code):
                 print("cannot find ICD-10 item:", diagn_code)
@@ -66,12 +66,12 @@ def convertState(evtPath, dynPath, modelNs, destPath=None):
             concept = [ icd10_sys, ICD[diagn_code], descr ]
             fhir_cond(g, case_uri, concept)
 
-        age = int(stat_state['age'])
+        age = int(stat_ctx['age'])
         g.add(( case_uri, FHR['birthDate'], Literal(age) ))
 
         return QuotedGraph(g.store, g.identifier)
 
-    # lookup dynamic state based on timestamp
+    # lookup dynamic ctx based on timestamp
     ddf = pd.read_csv(dynPath, index_col=0)
     ddf['time:timestamp'] = pd.to_datetime(ddf['time:timestamp'])
     ddf['time:until'] = ddf.groupby([ 'case:concept:name', 'concept:name' ])['time:timestamp'].shift(-1)
@@ -83,49 +83,49 @@ def convertState(evtPath, dynPath, modelNs, destPath=None):
     statg = Graph(); dyng = Graph()
     total_cases = len(edf['case:concept:name'].unique())
     for cnt, (case, group) in enumerate(edf.groupby('case:concept:name')):
-        if cnt % 100 == 0:
+        if cnt % 500 == 0:
             print(f"case #{cnt} / {total_cases}")
 
         case_uri = str_to_uri(f"case_{case}", modelNs)
 
-        states = []; idx_state = {}; 
-        align = [] # aligns each event with state ID
+        ctxs = []; idx_ctx = {}; 
+        align = [] # aligns each event with ctx ID
 
-        # get static state (incl. diagnoses)
-        stat_state = group.iloc[0]
-        stat_state_qg = convert_stat_state(case_uri, stat_state, modelNs)
-        statg.add(( case_uri, CM['statstate'], stat_state_qg ))
+        # get static ctx (incl. diagnoses)
+        stat_ctx = group.iloc[0]
+        stat_ctx_qg = convert_stat_ctx(case_uri, stat_ctx, modelNs)
+        statg.add(( case_uri, CM['stat_ctx'], stat_ctx_qg ))
 
         # print(case)
         for index, row in group.iterrows():
             # print(index, row['case:concept:name'], row['time:timestamp'])
 
-            # get dynamic state
-            dyn_state = dtimes[
+            # get dynamic ctx
+            dyn_ctx = dtimes[
                 (dtimes['case:concept:name'] == row['case:concept:name']) & 
                 (row['time:timestamp'] >= dtimes['time:from']) & ( (row['time:timestamp'] <= dtimes['time:until']) | ( dtimes['time:until'].isna() ) )
             ]
 
-            # state identifier = row indexes
-            idx = tuple(dyn_state.index)
-            # state already encountered; re-use ID
-            if idx in idx_state:
-                state_nr = idx_state[idx]
+            # ctx identifier = row indexes
+            idx = tuple(dyn_ctx.index)
+            # ctx already encountered; re-use ID
+            if idx in idx_ctx:
+                ctx_nr = idx_ctx[idx]
             else:
-                # add new state & get ID
-                state_nr = len(states)
-                states.append(convert_dyn_state(case_uri, dyn_state, modelNs))
-                idx_state[idx] = state_nr
+                # add new ctx & get ID
+                ctx_nr = len(ctxs)
+                ctxs.append(convert_dyn_ctx(case_uri, dyn_ctx, modelNs))
+                idx_ctx[idx] = ctx_nr
             
-            # add state ID for event
-            align.append(Literal(state_nr))
+            # add ctx ID for event
+            align.append(Literal(ctx_nr))
 
-        # afterwards, add event alignment & states to graph
+        # afterwards, add event alignment & ctxs to graph
         dyng.add(( case_uri, CM['alignment'], rdf_coll(dyng, *align) ))
-        dyng.add(( case_uri, CM['dynstates'], rdf_coll(dyng, *states) ))
+        dyng.add(( case_uri, CM['dyn_ctxs'], rdf_coll(dyng, *ctxs) ))
 
-        # if case == 88:
-        #     break
+        if case == 88:
+            break
     
     if destPath is not None:
         statg.serialize(format="n3", destination=os.path.join(destPath, "static.n3"))
@@ -192,8 +192,8 @@ def convertModel(itemObjs, modelNs, dest):
             for child in itemObj['children']:
                 g.add((planItemUri, CM['hasChild'], str_to_uri(child, modelNs)))
         
-        curState = itemObj['states'][-1]
-        g.add((planItemUri, ST['in'], rdf_coll(g, ST[curState[0]], Literal(curState[1]))))
+        curCtx = itemObj['ctxs'][-1]
+        g.add((planItemUri, ST['in'], rdf_coll(g, ST[curCtx[0]], Literal(curCtx[1]))))
                 
         for sentry in itemObj['sentries']['entry']:
             sentryUri = str_to_uri(sentry['id'], modelNs)

@@ -9,49 +9,60 @@
 
 # CRB-65
 
-{ ?p :crb_65 ?score } 
+{ ( ?p ?ctx ) :crb_65 ( ?terms ?score ) } 
 <= {
-    ( 1 { ?p :crb_65_term ?nr } ?terms )
+    ( ?term { ( ?p ?ctx ) :crb_65_term ?term } ?terms )
         log:collectAllIn _:t .
 
-    ?terms math:sum ?score
+    ?terms list:length ?score
 } .
 
-{ ?p :crb_65_term 1 } 
+{ ( ?p ?ctx ) :crb_65_term "confusion" } 
 <= {
-    # confusion derived from diagnostic codes
-    ?p!fh:subjectOf!fh:code list:in ( icd:R410 icd:F058 icd:F448 icd:R55 icd:G4021 icd:G4020 icd:G4011 icd:G4010 )
+    # "confusion" derived from diagnostic codes
+    ?ctx log:includes { ?p!fh:subjectOf fh:code ?diagn } .
+    ?diagn list:in ( icd:R410 icd:F058 icd:F448 icd:R55 icd:G4021 icd:G4020 icd:G4011 icd:G4010 )
 } .
 
-{ ?p :crb_65_term 2 } 
+{ ( ?p ?ctx ) :crb_65_term "respiration" } 
 <= {
-    ?p fh:subjectOf ?o . 
-    ?o fh:code sct:364062005 ; # respiration
-        fh:value ?v .
+    ?ctx log:includes {
+        ?p fh:subjectOf ?o . 
+        ?o fh:code sct:364062005 ; # respiration
+            fh:value ?v .
+    } .
     ?v math:notLessThan 30 
 } .
 
-{ ?p :crb_65_term 3 } 
-<= { ?p :crb_65_bp ?nr } .
-
-{ ?p :crb_65_bp 1 } 
-<= {
-    ?p fh:subjectOf ?o . 
-    ?o fh:code sct:271649006 ; # systolic
-        fh:value ?v .
-    ?v math:lessThan 90
+{ ( ?p ?ctx ) :crb_65_term "BP" } 
+<= { 
+    ( ?p ?ctx ) :crb_65_bp ?nr .
 } .
 
-{ ?p :crb_65_bp 2 } 
+{ ( ?p ?ctx ) :crb_65_bp "dias" } 
 <= {
-    ?p fh:subjectOf ?o . 
-    ?o fh:code sct:271650006 ; # diastolic
-        fh:value ?v .
-    ?v math:notGreaterThan 60
+    ?ctx log:includes {
+        ?p fh:subjectOf ?o . 
+        ?o fh:code sct:271649006 ; # systolic
+            fh:value ?v .
+    } .
+    ?v math:lessThan 90 .
+    true log:callWithCut true .
 } .
 
-{ ?p :crb_65_term 4 } 
+{ ( ?p ?ctx ) :crb_65_bp "sys" } 
 <= {
-    ?p fh:birthDate ?age . # TODO
+    ?ctx log:includes {
+        ?p fh:subjectOf ?o . 
+        ?o fh:code sct:271650006 ; # diastolic
+            fh:value ?v .
+    } .
+    ?v math:notGreaterThan 60 .
+    true log:callWithCut true .
+} .
+
+{ ( ?p ?ctx ) :crb_65_term "age" } 
+<= {
+    ?ctx log:includes { ?p fh:birthDate ?age . } . # TODO 
     ?age math:notLessThan 65
 } .

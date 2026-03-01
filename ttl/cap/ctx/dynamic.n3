@@ -1,0 +1,80 @@
+@prefix ns1: <http://rdf.org/cmmn#> .
+@prefix ns2: <http://hl7.org/fhir/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://ontario.org/qbp/cap#case_13> ns1:alignment ( 0 0 0 0 0 0 0 0 0 0 ) ;
+    ns1:dyn_ctxs ( {
+        } ) .
+
+<http://ontario.org/qbp/cap#case_88> ns1:alignment ( 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 ) ;
+    ns1:dyn_ctxs ( {
+        } {
+            <http://ontario.org/qbp/cap#case_88> ns2:subjectOf [ a ns2:Observation ;
+                        rdfs:label "Respiration observable" ;
+                        ns2:code <http://snomed.info/id/364062005> ;
+                        ns2:value 20.0 ],
+                    [ a ns2:Observation ;
+                        rdfs:label "Heart rate" ;
+                        ns2:code <http://snomed.info/id/364075005> ;
+                        ns2:value 84.0 ],
+                    [ a ns2:Observation ;
+                        rdfs:label "Systolic blood pressure" ;
+                        ns2:code <http://snomed.info/id/271649006> ;
+                        ns2:value 123.0 ],
+                    [ a ns2:Observation ;
+                        rdfs:label "Diastolic blood pressure" ;
+                        ns2:code <http://snomed.info/id/271650006> ;
+                        ns2:value 58.0 ],
+                    [ a ns2:Observation ;
+                        rdfs:label "Body temperature" ;
+                        ns2:code <http://snomed.info/id/386725007> ;
+                        ns2:value 37.2 ] .
+
+        } {
+            <http://ontario.org/qbp/cap#case_88> ns2:subjectOf [ a ns2:Observation ;
+                        rdfs:label "Diastolic blood pressure" ;
+                        ns2:code <http://snomed.info/id/271650006> ;
+                        ns2:value 51.0 ],
+                    [ a ns2:Observation ;
+                        rdfs:label "Heart rate" ;
+                        ns2:code <http://snomed.info/id/364075005> ;
+                        ns2:value 84.0 ],
+                    [ a ns2:Observation ;
+                        rdfs:label "Body temperature" ;
+                        ns2:code <http://snomed.info/id/386725007> ;
+                        ns2:value 37.1 ],
+                    [ a ns2:Observation ;
+                        rdfs:label "Respiration observable" ;
+                        ns2:code <http://snomed.info/id/364062005> ;
+                        ns2:value 22.0 ],
+                    [ a ns2:Observation ;
+                        rdfs:label "Systolic blood pressure" ;
+                        ns2:code <http://snomed.info/id/271649006> ;
+                        ns2:value 106.0 ] .
+
+        } {
+            <http://ontario.org/qbp/cap#case_88> ns2:subjectOf [ a ns2:Observation ;
+                        rdfs:label "Diastolic blood pressure" ;
+                        ns2:code <http://snomed.info/id/271650006> ;
+                        ns2:value 59.0 ],
+                    [ a ns2:Observation ;
+                        rdfs:label "Heart rate" ;
+                        ns2:code <http://snomed.info/id/364075005> ;
+                        ns2:value 74.0 ],
+                    [ a ns2:Observation ;
+                        rdfs:label "Body temperature" ;
+                        ns2:code <http://snomed.info/id/386725007> ;
+                        ns2:value 37.6 ],
+                    [ a ns2:Observation ;
+                        rdfs:label "Respiration observable" ;
+                        ns2:code <http://snomed.info/id/364062005> ;
+                        ns2:value 20.0 ],
+                    [ a ns2:Observation ;
+                        rdfs:label "Systolic blood pressure" ;
+                        ns2:code <http://snomed.info/id/271649006> ;
+                        ns2:value 128.0 ] .
+
+        } ) .
+
